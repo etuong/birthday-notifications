@@ -134,32 +134,20 @@ body {
     }
   }
 
-  .thank-you-msg {
+  .confirmation-msg {
     position: absolute;
     width: 200px;
     height: 130px;
     text-align: center;
-    font-size: 2em;
+    font-size: 1.3em;
     color: $base-color;
     left: 50%;
     top: 50%;
     -webkit-transform: translate(-50%, -50%);
 
-    &:after {
-      position: absolute;
-      content: "";
-      width: 50px;
-      height: 25px;
-      border: 10px solid $base-color;
-      border-right: 0;
-      border-top: 0;
-      left: 50%;
-      top: 50%;
-      -webkit-transform: translate(-50%, -50%) rotate(0deg) scale(0);
-      transform: translate(-50%, -50%) rotate(0deg) scale(0);
-      -webkit-animation: success ease-in 0.15s forwards;
-      animation: success ease-in 0.15s forwards;
-      animation-delay: 2.5s;
+    span {
+      font-size: 0.7em;
+      cursor: pointer;
     }
   }
 
@@ -202,7 +190,7 @@ body {
 }
 
 small {
-  font-size: 0.7em;
+  font-size: 0.75em;
 }
 
 @-webkit-keyframes success {

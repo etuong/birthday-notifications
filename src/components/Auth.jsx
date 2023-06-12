@@ -116,6 +116,10 @@ const Auth = () => {
             </div>
           </div>
         </div>
+
+        <div className="face face-left">
+          <div className="content"></div>
+        </div>
       </div>
     </div>
   );

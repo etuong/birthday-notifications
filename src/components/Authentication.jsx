@@ -1,10 +1,18 @@
 import React, { useState } from "react";
 
-const Auth = () => {
+const Authentication = () => {
   const [authMode, setAuthMode] = useState("signin");
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [passwordAgain, setPasswordAgain] = useState("");
 
   const changeAuthMode = () => {
     setAuthMode(authMode === "signin" ? "signup" : "signin");
+    setName("");
+    setEmail("");
+    setPassword("");
+    setPasswordAgain("");
   };
 
   if (authMode === "signin") {
@@ -25,6 +33,7 @@ const Auth = () => {
                 type="email"
                 className="form-control mt-1"
                 placeholder="Enter email"
+                onChange={(e) => setEmail(e.target.value)}
               />
             </div>
             <div className="form-group mt-3">
@@ -33,6 +42,7 @@ const Auth = () => {
                 type="password"
                 className="form-control mt-1"
                 placeholder="Enter password"
+                onChange={(e) => setPassword(e.target.value)}
               />
             </div>
             <div className="d-grid gap-2 mt-3">
@@ -44,19 +54,6 @@ const Auth = () => {
               Forgot <a href="#">password?</a>
             </p>
           </div>
-          <h5>Or sign in with</h5>
-          <a href="#" className="btn btn-danger bt-social">
-            Facebook
-          </a>
-          <a href="#" className="btn btn-warning bt-social">
-            Google
-          </a>
-          <a href="#" className="btn btn-success bt-social">
-            Github
-          </a>
-          <a href="#" className="btn btn-info bt-social">
-            Twitter
-          </a>
         </form>
       </div>
     );
@@ -79,6 +76,7 @@ const Auth = () => {
               type="email"
               className="form-control mt-1"
               placeholder="e.g Jane Doe"
+              onChange={(e) => setName(e.target.value)}
             />
           </div>
           <div className="form-group mt-3">
@@ -87,6 +85,7 @@ const Auth = () => {
               type="email"
               className="form-control mt-1"
               placeholder="Email Address"
+              onChange={(e) => setEmail(e.target.value)}
             />
           </div>
           <div className="form-group mt-3">
@@ -95,6 +94,16 @@ const Auth = () => {
               type="password"
               className="form-control mt-1"
               placeholder="Password"
+              onChange={(e) => setPassword(e.target.value)}
+            />
+          </div>
+          <div className="form-group mt-3">
+            <label>Please Enter Password Again</label>
+            <input
+              type="password"
+              className="form-control mt-1"
+              placeholder="Password"
+              onChange={(e) => setPasswordAgain(e.target.value)}
             />
           </div>
           <div className="d-grid gap-2 mt-3">
@@ -108,4 +117,4 @@ const Auth = () => {
   );
 };
 
-export default Auth;
+export default Authentication;

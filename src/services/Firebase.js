@@ -1,10 +1,11 @@
-import { getFirestore } from "firebase/firestore";
-import { getStorage } from "firebase/storage";
-
-const messageCollection =
-  process.env.NODE_ENV === "production" ? "messages" : "test";
-const redirectOnSuccessAuth =
-  process.env.NODE_ENV === "production" ? "/firebase-chat/" : "/";
+import { initializeApp } from "firebase/app";
+import { getFirestore, collection, getDocs } from "firebase/firestore/lite";
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signOut,
+} from "firebase/auth";
 
 const firebaseConfig = {
   apiKey: process.env.REACT_APP_apiKey,
@@ -15,8 +16,50 @@ const firebaseConfig = {
   appId: process.env.REACT_APP_appId,
 };
 
-const app = firebase.initializeApp(firebaseConfig);
+const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
-const storage = getStorage();
+export const auth = getAuth();
 
-export default firebase;
+export const getCities = async () => {
+  const citiesCol = collection(db, "cities");
+  const citySnapshot = await getDocs(citiesCol);
+  const cityList = citySnapshot.docs.map((doc) => doc.data());
+  return cityList;
+};
+
+export const registerUser = (email, password) => {
+  createUserWithEmailAndPassword(auth, email, password)
+    .then((userCredential) => {
+      // Signed in
+      const user = userCredential.user;
+      // ...
+    })
+    .catch((error) => {
+      const errorCode = error.code;
+      const errorMessage = error.message;
+      // ..
+    });
+};
+
+export const login = (email, password) => {
+  signInWithEmailAndPassword(auth, email, password)
+    .then((userCredential) => {
+      // Signed in
+      const user = userCredential.user;
+      // ...
+    })
+    .catch((error) => {
+      const errorCode = error.code;
+      const errorMessage = error.message;
+    });
+};
+
+export const logout = () => {
+  signOut(auth)
+    .then(() => {
+      // Sign-out successful.
+    })
+    .catch((error) => {
+      // An error happened.
+    });
+};

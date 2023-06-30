@@ -1,13 +1,14 @@
 import "./App.scss";
-import Auth from "./components/Auth";
+import Authentication from "./components/Authentication";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
+
 function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Auth />} />
+          <Route path="/" element={<Authentication />} />
         </Routes>
       </BrowserRouter>
     </AuthProvider>

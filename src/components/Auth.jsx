@@ -16,7 +16,7 @@ const Auth = () => {
             <div className="text-center">
               Not registered yet?{" "}
               <span className="link-primary" onClick={changeAuthMode}>
-                Sign Up
+                Register
               </span>
             </div>
             <div className="form-group mt-3">
@@ -44,15 +44,17 @@ const Auth = () => {
               Forgot <a href="#">password?</a>
             </p>
           </div>
-          <h4>Login with</h4>
-          <a
-            href="#"
-            class="btn btn-primary bt-social"
-            data-provider="facebook"
-          >
+          <h5>Or sign in with</h5>
+          <a href="#" className="btn btn-danger bt-social">
             Facebook
           </a>
-          <a href="#" class="btn btn-info bt-social" data-provider="twitter">
+          <a href="#" className="btn btn-warning bt-social">
+            Google
+          </a>
+          <a href="#" className="btn btn-success bt-social">
+            Github
+          </a>
+          <a href="#" className="btn btn-info bt-social">
             Twitter
           </a>
         </form>
@@ -64,7 +66,7 @@ const Auth = () => {
     <div className="auth-form-container">
       <form className="auth-form">
         <div className="auth-form-content">
-          <h3 className="auth-form-title">Sign In</h3>
+          <h3 className="auth-form-title">Register</h3>
           <div className="text-center">
             Already registered?{" "}
             <span className="link-primary" onClick={changeAuthMode}>
@@ -97,12 +99,9 @@ const Auth = () => {
           </div>
           <div className="d-grid gap-2 mt-3">
             <button type="submit" className="btn btn-primary">
-              Submit
+              Register
             </button>
           </div>
-          <p className="text-center mt-2">
-            Forgot <a href="#">password?</a>
-          </p>
         </div>
       </form>
     </div>

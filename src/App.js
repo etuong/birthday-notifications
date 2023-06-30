@@ -10,12 +10,12 @@ function App() {
   return (
     <>
       <Auth />
-      <Fab icon={<FaBars />} alwaysShowTitle={true}>
+      {/* <Fab icon={<FaBars />} alwaysShowTitle={true}>
         <Action text="Email" onClick={() => {}} />
         <Action text="Help" onClick={() => {}}>
           <i className="fa fa-help" />
         </Action>
-      </Fab>
+      </Fab> */}
     </>
   );
 }

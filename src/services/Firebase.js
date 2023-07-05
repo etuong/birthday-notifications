@@ -27,7 +27,7 @@ export const getCities = async () => {
   return cityList;
 };
 
-export const registerUser = (email, password) => {
+export const registerUser = (name, email, password) => {
   createUserWithEmailAndPassword(auth, email, password)
     .then((userCredential) => {
       // Signed in

@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { registerUser } from "../services/Firebase";
 
 const Authentication = () => {
   const [authMode, setAuthMode] = useState("signin");
@@ -6,6 +7,7 @@ const Authentication = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [passwordAgain, setPasswordAgain] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
 
   const changeAuthMode = () => {
     setAuthMode(authMode === "signin" ? "signup" : "signin");
@@ -13,6 +15,28 @@ const Authentication = () => {
     setEmail("");
     setPassword("");
     setPasswordAgain("");
+    setErrorMessage("");
+  };
+
+  const handleRegistration = (event) => {
+    event.preventDefault();
+
+    // Validation
+    const validation = [];
+    if (!name) {
+      validation("* Name cannot be blank");
+    }
+    if (!email) {
+      validation("* Email cannot be blank");
+    }
+    if (!password || !passwordAgain) {
+      validation("* Password(s) cannot be blank");
+    } else if (password !== passwordAgain) {
+      validation("* Passwords are not the same");
+    }
+    setErrorMessage(validation.join("\n`"));
+
+    registerUser(name, email, password);
   };
 
   if (authMode === "signin") {
@@ -61,7 +85,7 @@ const Authentication = () => {
 
   return (
     <div className="auth-form-container">
-      <form className="auth-form">
+      <form className="auth-form" onSubmit={(e) => handleRegistration(e)}>
         <div className="auth-form-content">
           <h3 className="auth-form-title">Register</h3>
           <div className="text-center">
@@ -106,6 +130,7 @@ const Authentication = () => {
               onChange={(e) => setPasswordAgain(e.target.value)}
             />
           </div>
+          {errorMessage && <p className="error">{errorMessage}</p>}
           <div className="d-grid gap-2 mt-3">
             <button type="submit" className="btn btn-primary">
               Register

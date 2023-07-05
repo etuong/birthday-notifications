@@ -32,6 +32,11 @@ body {
     .auth-form-content {
       padding-left: 12%;
       padding-right: 12%;
+
+      .error {
+        color: red;
+        margin: 5px 0px;
+      }
     }
 
     .auth-form-title {

@@ -5,6 +5,7 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   signOut,
+  updateProfile,
 } from "firebase/auth";
 
 const firebaseConfig = {
@@ -27,31 +28,24 @@ export const getCities = async () => {
   return cityList;
 };
 
-export const registerUser = (name, email, password) => {
-  createUserWithEmailAndPassword(auth, email, password)
-    .then((userCredential) => {
-      // Signed in
-      const user = userCredential.user;
-      // ...
-    })
-    .catch((error) => {
-      const errorCode = error.code;
-      const errorMessage = error.message;
-      // ..
-    });
+export const registerUser = async (name, email, password) => {
+  const { user } = await createUserWithEmailAndPassword(
+    auth,
+    email,
+    password
+  ).catch((error) => {
+    console.error(error);
+  });
+  console.log(user);
+  await updateProfile(user, {
+    displayName: name,
+  });
 };
 
 export const login = (email, password) => {
-  signInWithEmailAndPassword(auth, email, password)
-    .then((userCredential) => {
-      // Signed in
-      const user = userCredential.user;
-      // ...
-    })
-    .catch((error) => {
-      const errorCode = error.code;
-      const errorMessage = error.message;
-    });
+  signInWithEmailAndPassword(auth, email, password).catch((error) => {
+    console.error(error);
+  });
 };
 
 export const logout = () => {

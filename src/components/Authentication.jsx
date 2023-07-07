@@ -7,7 +7,7 @@ const Authentication = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [passwordAgain, setPasswordAgain] = useState("");
-  const [errorMessage, setErrorMessage] = useState("");
+  const [errorMessages, setErrorMessages] = useState([]);
 
   const changeAuthMode = () => {
     setAuthMode(authMode === "signin" ? "signup" : "signin");
@@ -15,7 +15,7 @@ const Authentication = () => {
     setEmail("");
     setPassword("");
     setPasswordAgain("");
-    setErrorMessage("");
+    setErrorMessages("");
   };
 
   const handleRegistration = (event) => {
@@ -23,20 +23,28 @@ const Authentication = () => {
 
     // Validation
     const validation = [];
+    var validRegex =
+      /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
     if (!name) {
-      validation("* Name cannot be blank");
+      validation.push("Name cannot be blank");
     }
     if (!email) {
-      validation("* Email cannot be blank");
+      validation.push("Email cannot be blank");
+    } else if (!email.match(validRegex)) {
+      validation.push("Please enter a valid email address");
     }
     if (!password || !passwordAgain) {
-      validation("* Password(s) cannot be blank");
+      validation.push("Password(s) cannot be blank");
+    } else if (password.length < 6 && passwordAgain.length < 6) {
+      validation.push("Password(s) should be at least 6 characters");
     } else if (password !== passwordAgain) {
-      validation("* Passwords are not the same");
+      validation.push("Passwords are not the same");
     }
-    setErrorMessage(validation.join("\n`"));
+    setErrorMessages(validation);
 
-    registerUser(name, email, password);
+    if (validation.length === 0) {
+      registerUser(name, email, password);
+    }
   };
 
   if (authMode === "signin") {
@@ -70,7 +78,7 @@ const Authentication = () => {
               />
             </div>
             <div className="d-grid gap-2 mt-3">
-              <button type="submit" className="btn btn-primary">
+              <button type="submit" className="btn btn-success">
                 Submit
               </button>
             </div>
@@ -97,7 +105,7 @@ const Authentication = () => {
           <div className="form-group mt-3">
             <label>Full Name</label>
             <input
-              type="email"
+              type="text"
               className="form-control mt-1"
               placeholder="e.g Jane Doe"
               onChange={(e) => setName(e.target.value)}
@@ -130,9 +138,17 @@ const Authentication = () => {
               onChange={(e) => setPasswordAgain(e.target.value)}
             />
           </div>
-          {errorMessage && <p className="error">{errorMessage}</p>}
+          {errorMessages && (
+            <ul>
+              {errorMessages.map((errorMessage, index) => (
+                <li key={index} className="error">
+                  {errorMessage}
+                </li>
+              ))}
+            </ul>
+          )}
           <div className="d-grid gap-2 mt-3">
-            <button type="submit" className="btn btn-primary">
+            <button type="submit" className="btn btn-success">
               Register
             </button>
           </div>

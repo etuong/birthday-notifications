@@ -1,6 +1,9 @@
 import React, { useState } from "react";
-import { registerUser, login } from "../services/Firebase";
+import { registerUser, login, resetPassword } from "../services/Firebase";
 import useInput from "../hooks/useInput";
+
+const validRegex =
+  /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
 
 const Authentication = () => {
   const [authMode, setAuthMode] = useState("signin");
@@ -12,6 +15,7 @@ const Authentication = () => {
 
   const changeAuthMode = () => {
     setAuthMode(authMode === "signin" ? "signup" : "signin");
+    setErrorMessages([]);
   };
 
   const handleRegistration = (event) => {
@@ -19,8 +23,6 @@ const Authentication = () => {
 
     // Validation
     const validation = [];
-    var validRegex =
-      /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
     if (!name.value) {
       validation.push("Name cannot be blank");
     }
@@ -46,13 +48,44 @@ const Authentication = () => {
   const handleSignIn = (event) => {
     event.preventDefault();
 
-    login(email.value, password.value);
+    // Validation
+    const validation = [];
+    if (!email.value) {
+      validation.push("Email cannot be blank");
+    } else if (!email.value.match(validRegex)) {
+      validation.push("Please enter a valid email address");
+    }
+    if (!password.value || !passwordAgain.value) {
+      validation.push("Password cannot be blank");
+    }
+    setErrorMessages(validation);
+
+    if (validation.length === 0) {
+      login(email.value, password.value);
+    }
   };
 
-  if (authMode === "signin") {
+  const handlePasswordReset = (event) => {
+    event.preventDefault();
+
+    // Validation
+    const validation = [];
+    if (!email.value) {
+      validation.push("Email cannot be blank");
+    } else if (!email.value.match(validRegex)) {
+      validation.push("Please enter a valid email address");
+    }
+    setErrorMessages(validation);
+
+    if (validation.length === 0) {
+      resetPassword(email.value);
+    }
+  };
+
+  const loginForm = () => {
     return (
-      <div className="auth-form-container" onSubmit={(e) => handleSignIn(e)}>
-        <form className="auth-form">
+      <div className="auth-form-container">
+        <form className="auth-form" onSubmit={(e) => handleSignIn(e)}>
           <div className="auth-form-content">
             <h3 className="auth-form-title">Sign In</h3>
             <div className="text-center">
@@ -79,83 +112,125 @@ const Authentication = () => {
                 {...password}
               />
             </div>
+            {errorMessages && (
+              <ul>
+                {errorMessages.map((errorMessage) => (
+                  <li key={errorMessage} className="error">
+                    {errorMessage}
+                  </li>
+                ))}
+              </ul>
+            )}
             <div className="d-grid gap-2 mt-3">
-              <button type="submit" className="btn btn-success">
+              <button type="submit" className="btn btn-secondary">
                 Submit
               </button>
             </div>
             <p className="text-center mt-2">
-              Forgot <a href="#">password?</a>
+              Forgot{" "}
+              <span
+                className="link-primary"
+                onClick={(e) => handlePasswordReset(e)}
+              >
+                Password?
+              </span>
             </p>
           </div>
         </form>
       </div>
     );
-  }
+  };
+
+  const registerForm = () => {
+    return (
+      <div className="auth-form-container">
+        <form className="auth-form" onSubmit={(e) => handleRegistration(e)}>
+          <div className="auth-form-content">
+            <h3 className="auth-form-title">Register</h3>
+            <div className="text-center">
+              Already registered?{" "}
+              <span className="link-primary" onClick={changeAuthMode}>
+                Sign In
+              </span>
+            </div>
+            <div className="form-group mt-3">
+              <label>Name</label>
+              <input
+                type="text"
+                className="form-control mt-1"
+                placeholder="e.g Jane Doe"
+                {...name}
+              />
+            </div>
+            <div className="form-group mt-3">
+              <label>Email address</label>
+              <input
+                type="email"
+                className="form-control mt-1"
+                placeholder="Email Address"
+                {...email}
+              />
+            </div>
+            <div className="form-group mt-3">
+              <label>Password</label>
+              <input
+                type="password"
+                className="form-control mt-1"
+                placeholder="Password"
+                {...password}
+              />
+            </div>
+            <div className="form-group mt-3">
+              <label>Please Enter Password Again</label>
+              <input
+                type="password"
+                className="form-control mt-1"
+                placeholder="Password"
+                {...passwordAgain}
+              />
+            </div>
+            {errorMessages && (
+              <ul>
+                {errorMessages.map((errorMessage) => (
+                  <li key={errorMessage} className="error">
+                    {errorMessage}
+                  </li>
+                ))}
+              </ul>
+            )}
+            <div className="d-grid gap-2 mt-3">
+              <button type="submit" className="btn btn-secondary">
+                Register
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    );
+  };
 
   return (
     <div className="auth-form-container">
-      <form className="auth-form" onSubmit={(e) => handleRegistration(e)}>
-        <div className="auth-form-content">
-          <h3 className="auth-form-title">Register</h3>
-          <div className="text-center">
-            Already registered?{" "}
-            <span className="link-primary" onClick={changeAuthMode}>
-              Sign In
-            </span>
-          </div>
-          <div className="form-group mt-3">
-            <label>Full Name</label>
-            <input
-              type="text"
-              className="form-control mt-1"
-              placeholder="e.g Jane Doe"
-              {...name}
-            />
-          </div>
-          <div className="form-group mt-3">
-            <label>Email address</label>
-            <input
-              type="email"
-              className="form-control mt-1"
-              placeholder="Email Address"
-              {...email}
-            />
-          </div>
-          <div className="form-group mt-3">
-            <label>Password</label>
-            <input
-              type="password"
-              className="form-control mt-1"
-              placeholder="Password"
-              {...password}
-            />
-          </div>
-          <div className="form-group mt-3">
-            <label>Please Enter Password Again</label>
-            <input
-              type="password"
-              className="form-control mt-1"
-              placeholder="Password"
-              {...passwordAgain}
-            />
-          </div>
-          {errorMessages && (
-            <ul>
-              {errorMessages.map((errorMessage, index) => (
-                <li key={index} className="error">
-                  {errorMessage}
-                </li>
-              ))}
-            </ul>
-          )}
-          <div className="d-grid gap-2 mt-3">
-            <button type="submit" className="btn btn-success">
-              Register
-            </button>
-          </div>
+      {authMode === "signin" ? loginForm() : registerForm()}
+
+      <div
+        className="toast"
+        role="alert"
+        aria-live="assertive"
+        aria-atomic="true"
+      >
+        <div className="toast-header">
+          <strong className="me-auto">Bootstrap</strong>
+          <small>11 mins ago</small>
+          <button
+            type="button"
+            className="btn-close"
+            data-bs-dismiss="toast"
+            aria-label="Close"
+          ></button>
         </div>
-      </form>
+        <div className="toast-body">Hello, world! This is a toast message.</div>
+      </div>
     </div>
   );
 };

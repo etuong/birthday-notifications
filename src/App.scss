@@ -8,7 +8,6 @@ body {
   font-family: Tahoma, Verdana, Segoe, sans-serif;
   font-size: 14px;
   text-align: center;
-  padding: 0px 20px;
 }
 
 .auth-form-container {
@@ -55,6 +54,10 @@ body {
       color: rgb(34, 34, 34);
     }
   }
+}
+
+.nav-link {
+  cursor: pointer;
 }
 
 .card-container {

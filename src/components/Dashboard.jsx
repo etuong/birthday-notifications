@@ -1,12 +1,16 @@
 import React from "react";
+import { logout } from "../services/Firebase";
+import useAuth from "../hooks/useAuth";
 
 const Dashboard = () => {
+  const { user } = useAuth();
+
   return (
     <>
       <nav className="navbar navbar-expand-lg navbar-light bg-light">
         <div className="container-fluid">
           <a className="navbar-brand" href="#">
-            Birthday Notifications
+            Hello, {user.displayName}!
           </a>
           <button
             className="navbar-toggler"
@@ -22,59 +26,10 @@ const Dashboard = () => {
           <div className="collapse navbar-collapse" id="navbarScroll">
             <ul className="navbar-nav me-auto my-2 my-lg-0 navbar-nav-scroll">
               <li className="nav-item">
-                <a className="nav-link active" aria-current="page" href="#">
-                  Home
-                </a>
+                <span className="nav-link">Home</span>
               </li>
-              <li className="nav-item">
-                <a className="nav-link" href="#">
-                  Link
-                </a>
-              </li>
-              <li className="nav-item dropdown">
-                <a
-                  className="nav-link dropdown-toggle"
-                  href="#"
-                  id="navbarScrollingDropdown"
-                  role="button"
-                  data-bs-toggle="dropdown"
-                  aria-expanded="false"
-                >
-                  Link
-                </a>
-                <ul
-                  className="dropdown-menu"
-                  aria-labelledby="navbarScrollingDropdown"
-                >
-                  <li>
-                    <a className="dropdown-item" href="#">
-                      Action
-                    </a>
-                  </li>
-                  <li>
-                    <a className="dropdown-item" href="#">
-                      Another action
-                    </a>
-                  </li>
-                  <li>
-                    <hr className="dropdown-divider" />
-                  </li>
-                  <li>
-                    <a className="dropdown-item" href="#">
-                      Something else here
-                    </a>
-                  </li>
-                </ul>
-              </li>
-              <li className="nav-item">
-                <a
-                  className="nav-link disabled"
-                  href="#"
-                  tabindex="-1"
-                  aria-disabled="true"
-                >
-                  Link
-                </a>
+              <li className="nav-item" onClick={(e) => logout()}>
+                <span className="nav-link">Sign Out</span>
               </li>
             </ul>
             <form className="d-flex">
@@ -93,11 +48,13 @@ const Dashboard = () => {
       </nav>
       <div className="card-container">
         {Array.apply(null, { length: 10 }).map((e, i) => (
-          <div className="card border-dark mb-3">
+          <div className="card border-dark mb-3" key={i}>
             <div className="card-header">Jan 23 ✎</div>
             <div className="card-body text-dark">
               <h5 className="card-title">Ethan Uong</h5>
-              <p className="card-text">Ethan will turn 23 years old in 256 days!</p>
+              <p className="card-text">
+                Ethan will turn 23 years old in 256 days!
+              </p>
             </div>
           </div>
         ))}

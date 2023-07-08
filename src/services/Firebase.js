@@ -1,4 +1,4 @@
-import { initializeApp } from "firebase/app";
+import firebase from "firebase/compat/app";
 import { getFirestore, collection, getDocs } from "firebase/firestore/lite";
 import {
   getAuth,
@@ -7,19 +7,13 @@ import {
   signOut,
   updateProfile,
 } from "firebase/auth";
+import "firebase/compat/auth";
+import { firebaseConfig } from "./Credentials";
 
-const firebaseConfig = {
-  apiKey: process.env.REACT_APP_apiKey,
-  authDomain: process.env.REACT_APP_authDomain,
-  projectId: process.env.REACT_APP_projectId,
-  storageBucket: process.env.REACT_APP_storageBucket,
-  messagingSenderId: process.env.REACT_APP_messagingSenderId,
-  appId: process.env.REACT_APP_appId,
-};
-
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-export const auth = getAuth();
+const firebaseApp = firebase.initializeApp(firebaseConfig);
+const db = getFirestore(firebaseApp);
+const auth = getAuth();
+export default firebase;
 
 export const getCities = async () => {
   const citiesCol = collection(db, "cities");
@@ -34,17 +28,20 @@ export const registerUser = async (name, email, password) => {
     email,
     password
   ).catch((error) => {
-    console.error(error);
+    alert(error.message);
+    return false;
   });
-  console.log(user);
+
   await updateProfile(user, {
     displayName: name,
   });
+
+  return true;
 };
 
 export const login = (email, password) => {
   signInWithEmailAndPassword(auth, email, password).catch((error) => {
-    console.error(error);
+    alert(error.message);
   });
 };
 

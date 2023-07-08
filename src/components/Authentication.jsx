@@ -1,21 +1,17 @@
 import React, { useState } from "react";
-import { registerUser } from "../services/Firebase";
+import { registerUser, login } from "../services/Firebase";
+import useInput from "../hooks/useInput";
 
 const Authentication = () => {
   const [authMode, setAuthMode] = useState("signin");
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [passwordAgain, setPasswordAgain] = useState("");
+  const name = useInput("");
+  const email = useInput("");
+  const password = useInput("");
+  const passwordAgain = useInput("");
   const [errorMessages, setErrorMessages] = useState([]);
 
   const changeAuthMode = () => {
     setAuthMode(authMode === "signin" ? "signup" : "signin");
-    setName("");
-    setEmail("");
-    setPassword("");
-    setPasswordAgain("");
-    setErrorMessages("");
   };
 
   const handleRegistration = (event) => {
@@ -25,31 +21,37 @@ const Authentication = () => {
     const validation = [];
     var validRegex =
       /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
-    if (!name) {
+    if (!name.value) {
       validation.push("Name cannot be blank");
     }
-    if (!email) {
+    if (!email.value) {
       validation.push("Email cannot be blank");
-    } else if (!email.match(validRegex)) {
+    } else if (!email.value.match(validRegex)) {
       validation.push("Please enter a valid email address");
     }
-    if (!password || !passwordAgain) {
+    if (!password.value || !passwordAgain.value) {
       validation.push("Password(s) cannot be blank");
-    } else if (password.length < 6 && passwordAgain.length < 6) {
+    } else if (password.value.length < 6 && passwordAgain.value.length < 6) {
       validation.push("Password(s) should be at least 6 characters");
-    } else if (password !== passwordAgain) {
+    } else if (password.value !== passwordAgain.value) {
       validation.push("Passwords are not the same");
     }
     setErrorMessages(validation);
 
     if (validation.length === 0) {
-      registerUser(name, email, password);
+      registerUser(name.value, email.value, password.value);
     }
+  };
+
+  const handleSignIn = (event) => {
+    event.preventDefault();
+
+    login(email.value, password.value);
   };
 
   if (authMode === "signin") {
     return (
-      <div className="auth-form-container">
+      <div className="auth-form-container" onSubmit={(e) => handleSignIn(e)}>
         <form className="auth-form">
           <div className="auth-form-content">
             <h3 className="auth-form-title">Sign In</h3>
@@ -65,7 +67,7 @@ const Authentication = () => {
                 type="email"
                 className="form-control mt-1"
                 placeholder="Enter email"
-                onChange={(e) => setEmail(e.target.value)}
+                {...email}
               />
             </div>
             <div className="form-group mt-3">
@@ -74,7 +76,7 @@ const Authentication = () => {
                 type="password"
                 className="form-control mt-1"
                 placeholder="Enter password"
-                onChange={(e) => setPassword(e.target.value)}
+                {...password}
               />
             </div>
             <div className="d-grid gap-2 mt-3">
@@ -108,7 +110,7 @@ const Authentication = () => {
               type="text"
               className="form-control mt-1"
               placeholder="e.g Jane Doe"
-              onChange={(e) => setName(e.target.value)}
+              {...name}
             />
           </div>
           <div className="form-group mt-3">
@@ -117,7 +119,7 @@ const Authentication = () => {
               type="email"
               className="form-control mt-1"
               placeholder="Email Address"
-              onChange={(e) => setEmail(e.target.value)}
+              {...email}
             />
           </div>
           <div className="form-group mt-3">
@@ -126,7 +128,7 @@ const Authentication = () => {
               type="password"
               className="form-control mt-1"
               placeholder="Password"
-              onChange={(e) => setPassword(e.target.value)}
+              {...password}
             />
           </div>
           <div className="form-group mt-3">
@@ -135,7 +137,7 @@ const Authentication = () => {
               type="password"
               className="form-control mt-1"
               placeholder="Password"
-              onChange={(e) => setPasswordAgain(e.target.value)}
+              {...passwordAgain}
             />
           </div>
           {errorMessages && (

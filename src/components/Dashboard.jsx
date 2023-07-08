@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { logout } from "../services/Firebase";
 import useAuth from "../hooks/useAuth";
 import DatePicker from "react-date-picker";
+import Faq from "./Faq";
 
 const ModalForm = () => {
   const [name, setName] = useState("");
@@ -14,14 +15,14 @@ const ModalForm = () => {
   return (
     <div
       className="modal fade"
-      id="staticBackdrop"
+      id="formModal"
       data-bs-backdrop="static"
       data-bs-keyboard="false"
     >
       <div className="modal-dialog">
         <div className="modal-content">
           <div className="modal-header">
-            <h5 className="modal-title" id="staticBackdropLabel">
+            <h5 className="modal-title">
               Add a New Birthday
             </h5>
             <button
@@ -117,13 +118,22 @@ const Dashboard = (props) => {
                 <span
                   className="nav-link"
                   data-bs-toggle="modal"
-                  data-bs-target="#staticBackdrop"
+                  data-bs-target="#formModal"
                 >
                   Add
                 </span>
-              </li>{" "}
+              </li>
               <li className="nav-item">
                 <span className="nav-link">Delete</span>
+              </li>
+              <li className="nav-item">
+                <span
+                  className="nav-link"
+                  data-bs-toggle="modal"
+                  data-bs-target="#faqModal"
+                >
+                  Faqs
+                </span>
               </li>
               <li className="nav-item" onClick={(e) => handleSignOut(e)}>
                 <span className="nav-link">Sign Out</span>
@@ -157,6 +167,7 @@ const Dashboard = (props) => {
         ))}
       </div>
       {ModalForm()}
+      <Faq />
     </>
   );
 };

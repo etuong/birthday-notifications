@@ -72,12 +72,27 @@ body {
   }
 }
 
-.col-form-label {
-  display: flex;
+.modal-body {
+  text-align: left;
 }
 
 .nav-link {
   cursor: pointer;
+}
+
+.faq-body {
+  p.faq-content {
+    line-height: 1.2em;
+    color: #9e9e9e;
+  }
+
+  summary {
+    font-size: 1em;
+  }
+
+  details[open] summary {
+    font-weight: bold;
+  }
 }
 
 .card-container {

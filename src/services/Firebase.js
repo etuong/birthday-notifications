@@ -24,36 +24,68 @@ export const getCities = async () => {
 };
 
 export const registerUser = async (name, email, password) => {
-  const { user } = await createUserWithEmailAndPassword(
-    auth,
-    email,
-    password
-  ).catch((error) => {
-    alert(error.message);
-    return false;
-  });
+  try {
+    const { user } = await createUserWithEmailAndPassword(
+      auth,
+      email,
+      password
+    );
+    await updateProfile(user, {
+      displayName: name,
+    });
+  } catch (e) {
+    return {
+      status: "error",
+      message: e.message,
+    };
+  }
 
-  await updateProfile(user, {
-    displayName: name,
-  });
-
-  return true;
+  return {
+    status: "success",
+    message: "You are successfully registered!",
+  };
 };
 
-export const login = (email, password) => {
-  signInWithEmailAndPassword(auth, email, password).catch((error) => {
-    alert(error.message);
-  });
+export const login = async (email, password) => {
+  try {
+    await signInWithEmailAndPassword(auth, email, password);
+  } catch (e) {
+    return {
+      status: "error",
+      message: e.message,
+    };
+  }
+
+  return {
+    status: "success",
+    message: "You are successfully logged in!",
+  };
 };
 
-export const logout = () => {
-  signOut(auth).catch((error) => {
-    alert(error.message);
+export const logout = async () => {
+  await signOut(auth).catch((error) => {
+    return {
+      status: "error",
+      message: error.message,
+    };
   });
+
+  return {
+    status: "success",
+    message: "You are successfully logged out!",
+  };
 };
 
-export const resetPassword = (email) => {
-  sendPasswordResetEmail(auth, email).catch((error) => {
-    alert(error.message);
+export const resetPassword = async (email) => {
+  await sendPasswordResetEmail(auth, email).catch((error) => {
+    return {
+      status: "error",
+      message: error.message,
+    };
   });
+
+  return {
+    status: "success",
+    message: "Please check your email to reset password",
+  };
 };

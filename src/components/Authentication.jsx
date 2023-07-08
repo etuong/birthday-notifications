@@ -5,7 +5,7 @@ import useInput from "../hooks/useInput";
 const validRegex =
   /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
 
-const Authentication = () => {
+const Authentication = (props) => {
   const [authMode, setAuthMode] = useState("signin");
   const name = useInput("");
   const email = useInput("");
@@ -18,7 +18,7 @@ const Authentication = () => {
     setErrorMessages([]);
   };
 
-  const handleRegistration = (event) => {
+  const handleRegistration = async (event) => {
     event.preventDefault();
 
     // Validation
@@ -41,11 +41,16 @@ const Authentication = () => {
     setErrorMessages(validation);
 
     if (validation.length === 0) {
-      registerUser(name.value, email.value, password.value);
+      const result = await registerUser(
+        name.value,
+        email.value,
+        password.value
+      );
+      props.openToast(result);
     }
   };
 
-  const handleSignIn = (event) => {
+  const handleSignIn = async (event) => {
     event.preventDefault();
 
     // Validation
@@ -55,30 +60,30 @@ const Authentication = () => {
     } else if (!email.value.match(validRegex)) {
       validation.push("Please enter a valid email address");
     }
-    if (!password.value || !passwordAgain.value) {
+    if (!password.value) {
       validation.push("Password cannot be blank");
     }
     setErrorMessages(validation);
 
     if (validation.length === 0) {
-      login(email.value, password.value);
+      const result = await login(email.value, password.value);
+      props.openToast(result);
     }
   };
 
-  const handlePasswordReset = (event) => {
+  const handlePasswordReset = async (event) => {
     event.preventDefault();
 
     // Validation
     const validation = [];
-    if (!email.value) {
-      validation.push("Email cannot be blank");
-    } else if (!email.value.match(validRegex)) {
-      validation.push("Please enter a valid email address");
+    if (!email.value || !email.value.match(validRegex)) {
+      validation.push("To reset password, please enter a valid email address");
     }
     setErrorMessages(validation);
 
     if (validation.length === 0) {
-      resetPassword(email.value);
+      const result = await resetPassword(email.value);
+      props.openToast(result);
     }
   };
 
@@ -98,6 +103,7 @@ const Authentication = () => {
               <label>Email address</label>
               <input
                 type="email"
+                required
                 className="form-control mt-1"
                 placeholder="Enter email"
                 {...email}
@@ -107,6 +113,7 @@ const Authentication = () => {
               <label>Password</label>
               <input
                 type="password"
+                required
                 className="form-control mt-1"
                 placeholder="Enter password"
                 {...password}
@@ -157,6 +164,7 @@ const Authentication = () => {
               <label>Name</label>
               <input
                 type="text"
+                required
                 className="form-control mt-1"
                 placeholder="e.g Jane Doe"
                 {...name}
@@ -166,6 +174,7 @@ const Authentication = () => {
               <label>Email address</label>
               <input
                 type="email"
+                required
                 className="form-control mt-1"
                 placeholder="Email Address"
                 {...email}
@@ -175,6 +184,7 @@ const Authentication = () => {
               <label>Password</label>
               <input
                 type="password"
+                required
                 className="form-control mt-1"
                 placeholder="Password"
                 {...password}
@@ -184,6 +194,7 @@ const Authentication = () => {
               <label>Please Enter Password Again</label>
               <input
                 type="password"
+                required
                 className="form-control mt-1"
                 placeholder="Password"
                 {...passwordAgain}
@@ -212,25 +223,6 @@ const Authentication = () => {
   return (
     <div className="auth-form-container">
       {authMode === "signin" ? loginForm() : registerForm()}
-
-      <div
-        className="toast"
-        role="alert"
-        aria-live="assertive"
-        aria-atomic="true"
-      >
-        <div className="toast-header">
-          <strong className="me-auto">Bootstrap</strong>
-          <small>11 mins ago</small>
-          <button
-            type="button"
-            className="btn-close"
-            data-bs-dismiss="toast"
-            aria-label="Close"
-          ></button>
-        </div>
-        <div className="toast-body">Hello, world! This is a toast message.</div>
-      </div>
     </div>
   );
 };

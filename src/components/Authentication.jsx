@@ -23,17 +23,10 @@ const Authentication = (props) => {
 
     // Validation
     const validation = [];
-    if (!name.value) {
-      validation.push("Name cannot be blank");
-    }
-    if (!email.value) {
-      validation.push("Email cannot be blank");
-    } else if (!email.value.match(validRegex)) {
+    if (!email.value.match(validRegex)) {
       validation.push("Please enter a valid email address");
     }
-    if (!password.value || !passwordAgain.value) {
-      validation.push("Password(s) cannot be blank");
-    } else if (password.value.length < 6 && passwordAgain.value.length < 6) {
+    if (password.value.length < 6 && passwordAgain.value.length < 6) {
       validation.push("Password(s) should be at least 6 characters");
     } else if (password.value !== passwordAgain.value) {
       validation.push("Passwords are not the same");
@@ -55,13 +48,8 @@ const Authentication = (props) => {
 
     // Validation
     const validation = [];
-    if (!email.value) {
-      validation.push("Email cannot be blank");
-    } else if (!email.value.match(validRegex)) {
+    if (!email.value.match(validRegex)) {
       validation.push("Please enter a valid email address");
-    }
-    if (!password.value) {
-      validation.push("Password cannot be blank");
     }
     setErrorMessages(validation);
 
@@ -76,7 +64,7 @@ const Authentication = (props) => {
 
     // Validation
     const validation = [];
-    if (!email.value || !email.value.match(validRegex)) {
+    if (!email.value.match(validRegex)) {
       validation.push("To reset password, please enter a valid email address");
     }
     setErrorMessages(validation);

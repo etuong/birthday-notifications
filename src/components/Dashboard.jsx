@@ -4,7 +4,12 @@ import useAuth from "../hooks/useAuth";
 import DatePicker from "react-date-picker";
 
 const ModalForm = () => {
-  const [value, onChange] = useState(new Date());
+  const [name, setName] = useState("");
+  const [date, setDate] = useState(new Date());
+
+  const handleCreation = () => {
+    alert(`${name} ${date}`);
+  };
 
   return (
     <div
@@ -27,18 +32,31 @@ const ModalForm = () => {
             ></button>
           </div>
           <div className="modal-body">
-            <form>
+            <form onSubmit={(e) => handleCreation(e)}>
               <div className="mb-3">
                 <label htmlFor="name" className="col-form-label">
                   Person's Name:
                 </label>
-                <input type="text" className="form-control" id="name" required/>
+                <input
+                  type="text"
+                  className="form-control"
+                  onChange={(event) => setName(event.target.value)}
+                  id="name"
+                  required
+                />
               </div>
               <div className="mb-3">
                 <label htmlFor="date" className="col-form-label">
                   Birth Date:
                 </label>
-                <DatePicker id="date" onChange={onChange} value={value} required />
+                <DatePicker
+                  id="date"
+                  onChange={setDate}
+                  clearIcon={null}
+                  openCalendarOnFocus={false}
+                  value={date}
+                  required
+                />
               </div>
             </form>
           </div>
@@ -50,7 +68,11 @@ const ModalForm = () => {
             >
               Close
             </button>
-            <button type="button" className="btn btn-primary">
+            <button
+              type="button"
+              className="btn btn-primary"
+              onClick={handleCreation}
+            >
               Add
             </button>
           </div>

@@ -4,12 +4,14 @@ import useAuth from "../hooks/useAuth";
 import DatePicker from "react-date-picker";
 import Faq from "./Faq";
 
-const ModalForm = () => {
-  const [name, setName] = useState("");
-  const [date, setDate] = useState(new Date());
+const FormModal = (props) => {
+  const [name, setName] = useState(props?.name || "");
+  const [phone, setPhone] = useState(props?.phone || "");
+  const [date, setDate] = useState(props?.date || new Date());
 
-  const handleCreation = () => {
-    alert(`${name} ${date}`);
+  const handleCreation = (event) => {
+    event.preventDefault();
+    alert(`${name} ${phone} ${date}`);
   };
 
   return (
@@ -22,9 +24,7 @@ const ModalForm = () => {
       <div className="modal-dialog">
         <div className="modal-content">
           <div className="modal-header">
-            <h5 className="modal-title">
-              Add a New Birthday
-            </h5>
+            <h5 className="modal-title">Add a New Birthday</h5>
             <button
               type="button"
               className="btn-close"
@@ -42,10 +42,27 @@ const ModalForm = () => {
                   type="text"
                   className="form-control"
                   onChange={(event) => setName(event.target.value)}
+                  placeholder="Jane Doe"
                   id="name"
                   required
                 />
               </div>
+
+              <div className="mb-3">
+                <label htmlFor="phone" className="col-form-label">
+                  Person's Phone Number:
+                </label>
+                <input
+                  type="tel"
+                  className="form-control"
+                  onChange={(event) => setPhone(event.target.value)}
+                  placeholder="911-123-4567"
+                  pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
+                  id="phone"
+                  required
+                />
+              </div>
+
               <div className="mb-3">
                 <label htmlFor="date" className="col-form-label">
                   Birth Date:
@@ -59,23 +76,20 @@ const ModalForm = () => {
                   required
                 />
               </div>
+
+              <div className="modal-footer">
+                <button
+                  type="button"
+                  className="btn btn-secondary"
+                  data-bs-dismiss="modal"
+                >
+                  Close
+                </button>
+                <button type="submit" className="btn btn-primary">
+                  Add
+                </button>
+              </div>
             </form>
-          </div>
-          <div className="modal-footer">
-            <button
-              type="button"
-              className="btn btn-secondary"
-              data-bs-dismiss="modal"
-            >
-              Close
-            </button>
-            <button
-              type="button"
-              className="btn btn-primary"
-              onClick={handleCreation}
-            >
-              Add
-            </button>
           </div>
         </div>
       </div>
@@ -124,9 +138,6 @@ const Dashboard = (props) => {
                 </span>
               </li>
               <li className="nav-item">
-                <span className="nav-link">Delete</span>
-              </li>
-              <li className="nav-item">
                 <span
                   className="nav-link"
                   data-bs-toggle="modal"
@@ -156,9 +167,16 @@ const Dashboard = (props) => {
       <div className="card-container">
         {Array.apply(null, { length: 10 }).map((e, i) => (
           <div className="card border-dark mb-3" key={i}>
-            <div className="card-header">Jan 23 ✎</div>
+            <div className="card-header">
+              Jan 23
+              <div className="controls">
+                <span className="icon">✏️</span>
+                <span className="icon">❌</span>
+              </div>
+            </div>
             <div className="card-body text-dark">
               <h5 className="card-title">Ethan Uong</h5>
+              <h6 class="card-subtitle mb-2 text-muted">626-951-7753</h6>
               <p className="card-text">
                 Ethan will turn 23 years old in 256 days!
               </p>
@@ -166,7 +184,7 @@ const Dashboard = (props) => {
           </div>
         ))}
       </div>
-      {ModalForm()}
+      <FormModal />
       <Faq />
     </>
   );

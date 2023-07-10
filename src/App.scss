@@ -74,6 +74,10 @@ body {
 
 .modal-body {
   text-align: left;
+
+  .modal-footer {
+    border: none;
+  }
 }
 
 .nav-link {
@@ -102,6 +106,25 @@ body {
   .card {
     width: 16em;
     margin: 5px;
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+
+      .controls {
+        .icon {
+          border: 1px solid transparent;
+          cursor: default;
+          &:hover {
+            border: 1px solid black;
+          }
+        }
+      }
+    }
+
+    .card-subtitle {
+      font-size: 0.8rem;
+    }
   }
 
   @media only screen and (max-width: 480px) {

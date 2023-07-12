@@ -124,30 +124,40 @@ export const deleteNote = async (note) => {
   await deleteDoc(noteRef);
 };*/
 
-export const addCard = async (payload) => {
+export const addCard = async (userId, payload) => {
   try {
-    await addDoc(collection(db, "jKDgFyaF5KfMoGZ03vzFBx0Kaeq1"), payload);
+    await addDoc(collection(db, userId), payload);
   } catch (error) {
     return {
       status: "error",
       message: error.message,
     };
   }
+
+  return {
+    status: "success",
+    message: "New card is successfully created!",
+  };
 };
 
-export const deleteCard = async (id, cardId) => {
+export const deleteCard = async (userId, cardId) => {
   if (cardId) {
-    await deleteDoc(doc(db, id, cardId)).then(() => {
+    await deleteDoc(doc(db, userId, cardId)).then(() => {
       return {
         status: "success",
         message: "Card has been deleted successfully",
       };
     });
+
+    return {
+      status: "success",
+      message: "Card is successfully deleted!",
+    };
   }
 };
 
-export const getCards = (id, callback) => {
-  return onSnapshot(query(collection(db, id)), (querySnapshot) => {
+export const getCards = (userId, callback) => {
+  return onSnapshot(query(collection(db, userId)), (querySnapshot) => {
     const cards = querySnapshot.docs.map((doc) => ({
       id: doc.id,
       ...doc.data(),

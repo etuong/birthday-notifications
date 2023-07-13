@@ -1,12 +1,4 @@
 import firebase from "firebase/compat/app";
-// import {
-//   getFirestore,
-//   collection,
-//   getDocs,
-//   setDoc,
-//   deleteDoc,
-//   doc,
-// } from "firebase/firestore";
 import {
   addDoc,
   collection,
@@ -100,29 +92,6 @@ export const resetPassword = async (email) => {
     message: "Please check your email to reset password",
   };
 };
-
-/*
-export const createNote = async (note) => {
-  await setDoc(doc(db, "notes", note.id), note);
-};
-
-export const getNotes = async () => {
-  const notesSnapshot = await getDocs(collection(db, "notes"));
-  const notesList = notesSnapshot.docs.map((doc) => doc.data());
-  return notesList;
-};
-
-export const updateNote = async (note) => {
-  const noteRef = doc(db, "notes", note.id);
-  await updateDoc(noteRef, {
-    description: "New description",
-  });
-};
-
-export const deleteNote = async (note) => {
-  const noteRef = doc(db, "notes", note.id);
-  await deleteDoc(noteRef);
-};*/
 
 export const addCard = async (userId, payload) => {
   try {

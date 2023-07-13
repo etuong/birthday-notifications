@@ -101,7 +101,6 @@ const Authentication = (props) => {
               <label>Password</label>
               <input
                 type="password"
-                required
                 className="form-control mt-1"
                 placeholder="Enter password"
                 {...password}

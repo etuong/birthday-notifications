@@ -5,6 +5,7 @@ import { useCards } from "../hooks/useCards";
 import DatePicker from "react-date-picker";
 import Faq from "./Faq";
 import { months } from "../utilities/constants";
+import { getDateInfo } from "../utilities/DateHelper";
 
 const Dashboard = (props) => {
   const { user } = useAuth();
@@ -98,7 +99,12 @@ const Dashboard = (props) => {
                   >
                     Close
                   </button>
-                  <button type="submit" className="btn btn-primary">
+                  <button
+                    type="submit"
+                    data-bs-dismiss="modal"
+                    data-bs-backdrop="false"
+                    className="btn btn-primary"
+                  >
                     Add
                   </button>
                 </div>
@@ -123,7 +129,7 @@ const Dashboard = (props) => {
             className="navbar-toggler"
             type="button"
             data-bs-toggle="collapse"
-            data-bs-target="#navbarScroll"
+            data-bs-target="#formModal"
             aria-controls="navbarScroll"
             aria-expanded="false"
             aria-label="Toggle navigation"
@@ -170,9 +176,7 @@ const Dashboard = (props) => {
       </nav>
       <div className="card-container">
         {cards.map((card) => {
-          const dateObj = new Date(card.birthDate.nanoseconds);
-          const month = months[dateObj.getMonth() + 1];
-          const day = dateObj.getDate();
+          const dateObj = getDateInfo(card.birthDate.seconds * 1000);
 
           return (
             <div className="card border-dark mb-3" key={card.id}>

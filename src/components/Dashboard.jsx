@@ -4,8 +4,7 @@ import useAuth from "../hooks/useAuth";
 import { useCards } from "../hooks/useCards";
 import DatePicker from "react-date-picker";
 import Faq from "./Faq";
-import { months } from "../utilities/constants";
-import { getDateInfo } from "../utilities/DateHelper";
+import { Card } from "./Card";
 
 const Dashboard = (props) => {
   const { user } = useAuth();
@@ -15,6 +14,10 @@ const Dashboard = (props) => {
     event.preventDefault();
     const result = await logout();
     props.openToast(result);
+  };
+
+  const handleSearch = async (event) => {
+    event.preventDefault();
   };
 
   const FormModal = () => {
@@ -160,11 +163,11 @@ const Dashboard = (props) => {
                 <span className="nav-link">Sign Out</span>
               </li>
             </ul>
-            <form className="d-flex">
+            <form className="d-flex" onSubmit={(event) => handleSearch(event)}>
               <input
                 className="form-control me-2"
                 type="search"
-                placeholder="Search"
+                placeholder="Search By Name"
                 aria-label="Search"
               />
               <button className="btn btn-outline-secondary" type="submit">
@@ -176,38 +179,15 @@ const Dashboard = (props) => {
       </nav>
       <div className="card-container">
         {cards.map((card) => {
-          const dateObj = getDateInfo(card.birthDate.seconds * 1000);
-
           return (
-            <div className="card border-dark mb-3" key={card.id}>
-              <div className="card-header">
-                {`${month}-${day}`}
-                <div className="controls">
-                  <span
-                    className="icon"
-                    onClick={(_) => {
-                      deleteCard(user.uid, card.id);
-                    }}
-                  >
-                    ✏️
-                  </span>
-                  <span
-                    className="icon"
-                    onClick={async (_) => {
-                      const result = await deleteCard(user.uid, card.id);
-                      props.openToast(result);
-                    }}
-                  >
-                    ❌
-                  </span>
-                </div>
-              </div>
-              <div className="card-body text-dark">
-                <h5 className="card-title">{card.name}</h5>
-                <h6 className="card-subtitle mb-2 text-muted">{card.phone}</h6>
-                <p className="card-text">Will turn 23 years old in 256 days!</p>
-              </div>
-            </div>
+            <Card
+              card={card}
+              handleEdit={(_) => {}}
+              handleDelete={async (_) => {
+                const result = await deleteCard(user.uid, card.id);
+                props.openToast(result);
+              }}
+            />
           );
         })}
       </div>

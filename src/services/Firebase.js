@@ -6,9 +6,7 @@ import {
   doc,
   getFirestore,
   onSnapshot,
-  orderBy,
   query,
-  serverTimestamp,
 } from "firebase/firestore";
 import {
   getAuth,
@@ -20,6 +18,7 @@ import {
 } from "firebase/auth";
 import "firebase/compat/auth";
 import { firebaseConfig } from "./Credentials";
+import { compareFn, getDateInfo } from "../utilities/DateHelper";
 
 const firebaseApp = firebase.initializeApp(firebaseConfig);
 const db = getFirestore(firebaseApp);
@@ -130,7 +129,9 @@ export const getCards = (userId, callback) => {
     const cards = querySnapshot.docs.map((doc) => ({
       id: doc.id,
       ...doc.data(),
+      ...getDateInfo(doc.data().birthDate.seconds),
     }));
+    cards.sort(compareFn);
 
     callback(cards);
   });

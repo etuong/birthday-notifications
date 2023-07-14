@@ -6,7 +6,12 @@ export const Card = ({ card, handleEdit, handleDelete }) => {
       <div className="card-header">
         <strong>{card.monthDay}</strong>
         <div className="controls">
-          <span className="icon" onClick={handleEdit}>
+          <span
+            className="icon"
+            data-bs-toggle="modal"
+            data-bs-target="#editModal"
+            onClick={handleEdit}
+          >
             ✏️
           </span>
           <span className="icon" onClick={handleDelete}>

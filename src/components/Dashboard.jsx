@@ -25,10 +25,13 @@ const Dashboard = (props) => {
     const [phone, setPhone] = useState("");
     const [birthDate, setBirthDate] = useState(new Date());
 
-    const handleCreation = async (event) => {
+    const handleCreation = (event) => {
       event.preventDefault();
-      const result = await addCard(user.uid, { name, phone, birthDate });
-      props.openToast(result);
+      document.querySelector(".modal-close").click();
+      setTimeout(async () => {
+        const result = await addCard(user.uid, { name, phone, birthDate });
+        props.openToast(result);
+      }, 500);
     };
 
     return (
@@ -44,7 +47,7 @@ const Dashboard = (props) => {
               <h5 className="modal-title">Add a New Birthday</h5>
               <button
                 type="button"
-                className="btn-close"
+                className="btn-close modal-close"
                 data-bs-dismiss="modal"
                 aria-label="Close"
               ></button>
@@ -102,12 +105,7 @@ const Dashboard = (props) => {
                   >
                     Close
                   </button>
-                  <button
-                    type="submit"
-                    data-bs-dismiss="modal"
-                    data-bs-backdrop="false"
-                    className="btn btn-primary"
-                  >
+                  <button type="submit" className="btn btn-primary">
                     Add
                   </button>
                 </div>
@@ -181,6 +179,7 @@ const Dashboard = (props) => {
         {cards.map((card) => {
           return (
             <Card
+              key={card.id}
               card={card}
               handleEdit={(_) => {}}
               handleDelete={async (_) => {

@@ -84,7 +84,7 @@ const Dashboard = (props) => {
             <Card
               key={card.id}
               card={card}
-              handleEdit={(_) => {}}
+              handleEdit={(_) => { }}
               handleDelete={async (_) => {
                 const result = await deleteCard(user.uid, card.id);
                 props.openToast(result);

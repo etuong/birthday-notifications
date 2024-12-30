@@ -1,10 +1,10 @@
-import firebase from "firebase/compat/app";
+import { initializeApp } from "firebase/app";
 import {
+  getFirestore,
   addDoc,
   collection,
   deleteDoc,
   doc,
-  getFirestore,
   onSnapshot,
   query,
 } from "firebase/firestore";
@@ -16,29 +16,23 @@ import {
   signOut,
   updateProfile,
 } from "firebase/auth";
-import "firebase/compat/auth";
 import { firebaseConfig } from "./Credentials";
 import { compareFn, getDateInfo } from "../utilities/DateHelper";
 
-const firebaseApp = firebase.initializeApp(firebaseConfig);
+const firebaseApp = initializeApp(firebaseConfig);
 const db = getFirestore(firebaseApp);
-const auth = getAuth();
-export default firebase;
+export const auth = getAuth(firebaseApp);
+
+export default firebaseApp;
 
 export const registerUser = async (name, email, password) => {
   try {
-    const { user } = await createUserWithEmailAndPassword(
-      auth,
-      email,
-      password
-    );
-    await updateProfile(user, {
-      displayName: name,
-    });
-  } catch (e) {
+    const { user } = await createUserWithEmailAndPassword(auth, email, password);
+    await updateProfile(user, { displayName: name });
+  } catch (error) {
     return {
       status: "error",
-      message: e.message,
+      message: error.message,
     };
   }
 
@@ -51,10 +45,10 @@ export const registerUser = async (name, email, password) => {
 export const login = async (email, password) => {
   try {
     await signInWithEmailAndPassword(auth, email, password);
-  } catch (e) {
+  } catch (error) {
     return {
       status: "error",
-      message: e.message,
+      message: error.message,
     };
   }
 
@@ -65,12 +59,14 @@ export const login = async (email, password) => {
 };
 
 export const logout = async () => {
-  await signOut(auth).catch((error) => {
+  try {
+    await signOut(auth);
+  } catch (error) {
     return {
       status: "error",
       message: error.message,
     };
-  });
+  }
 
   return {
     status: "success",
@@ -79,12 +75,14 @@ export const logout = async () => {
 };
 
 export const resetPassword = async (email) => {
-  await sendPasswordResetEmail(auth, email).catch((error) => {
+  try {
+    await sendPasswordResetEmail(auth, email);
+  } catch (error) {
     return {
       status: "error",
       message: error.message,
     };
-  });
+  }
 
   return {
     status: "success",
@@ -110,16 +108,18 @@ export const addCard = async (userId, payload) => {
 
 export const deleteCard = async (userId, cardId) => {
   if (cardId) {
-    await deleteDoc(doc(db, userId, cardId)).then(() => {
+    try {
+      await deleteDoc(doc(db, userId, cardId));
+    } catch (error) {
       return {
-        status: "success",
-        message: "Card has been deleted successfully",
+        status: "error",
+        message: error.message,
       };
-    });
+    }
 
     return {
       status: "success",
-      message: "Card is successfully deleted!",
+      message: "Card has been deleted successfully",
     };
   }
 };
@@ -131,8 +131,8 @@ export const getCards = (userId, callback) => {
       ...doc.data(),
       ...getDateInfo(doc.data().birthDate.seconds),
     }));
-    cards.sort(compareFn);
 
+    cards.sort(compareFn);
     callback(cards);
   });
 };

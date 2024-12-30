@@ -1,11 +1,12 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
 const useInput = (initialValue) => {
   const [value, setValue] = useState(initialValue);
 
-  const handleChange = (event) => {
-    setValue(event.target.value);
-  };
+  const handleChange = useMemo(
+    () => (event) => setValue(event.target.value),
+    []
+  );
 
   return {
     value,
@@ -14,3 +15,4 @@ const useInput = (initialValue) => {
 };
 
 export default useInput;
+

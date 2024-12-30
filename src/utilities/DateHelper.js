@@ -1,39 +1,40 @@
-import { months } from "./constants";
 
-export const getDateInfo = (seconds) => {
-  const dateObj = new Date(seconds * 1000);
-  const month = months[dateObj.getMonth()];
-  const day = dateObj.getDate();
-  const monthDay = `${month} ${day}`;
-  const dateNow = new Date(Date.now());
-  const diff = new Date(dateNow - dateObj);
-  const yearDifference = Math.abs(diff.getUTCFullYear() - 1970) + 1;
-  let daysToBirthday = daysIntoYear(dateObj) - daysIntoYear(dateNow);
-  if (daysToBirthday < 0) {
-    daysToBirthday = 365 + daysToBirthday;
+export const getDateInfo = (timestamp) => {
+  const birthday = new Date(timestamp * 1000);
+  const now = new Date();
+
+  // Calculate age
+  let age = now.getFullYear() - birthday.getFullYear() + 1;
+  const monthDiff = now.getMonth() - birthday.getMonth();
+  const dayDiff = now.getDate() - birthday.getDate();
+
+  // Adjust age if the birthday hasn't occurred yet this year
+  if (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)) {
+    age--;
   }
-  return { monthDay, yearDifference, daysToBirthday };
-};
 
-const daysIntoYear = (date) => {
-  return (
-    (Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()) -
-      Date.UTC(date.getFullYear(), 0, 0)) /
-    24 /
-    60 /
-    60 /
-    1000
-  );
+  // Set the birthday to the current year
+  birthday.setFullYear(now.getFullYear());
+
+  // If the birthday has already passed this year, set it to the next year
+  if (birthday < now) {
+    birthday.setFullYear(now.getFullYear() + 1);
+  }
+
+  // Calculate the difference in time
+  const diffTime = birthday - now;
+
+  // Convert the difference from milliseconds to days
+  const daysToBirthday = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+  const formattedBirthDate = birthday.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+  });
+
+  return { formattedBirthDate, daysToBirthday, age };
 };
 
 export function compareFn(a, b) {
-  if (a.daysToBirthday < b.daysToBirthday) {
-    return -1;
-  }
-
-  if (a.daysToBirthday > b.daysToBirthday) {
-    return 1;
-  }
-
-  return 0;
+  return a.daysToBirthday - b.daysToBirthday;
 }

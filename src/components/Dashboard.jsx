@@ -1,12 +1,12 @@
-import React from "react";
-import { logout, addCard, deleteCard } from "../services/Firebase";
-import useAuth from "../hooks/useAuth";
-import useCards from "../hooks/useCards";
-import Faq from "./Faq";
-import Card from "./Card";
-import FormModal from "./FormModal";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min";
+import React from "react";
+import useAuth from "../hooks/useAuth";
+import useCards from "../hooks/useCards";
+import { addCard, deleteCard, logout } from "../services/Firebase";
+import Card from "./Card";
+import Faq from "./Faq";
+import FormModal from "./FormModal";
 
 const Dashboard = ({ openToast }) => {
   const { user } = useAuth();

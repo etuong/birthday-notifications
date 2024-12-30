@@ -29,98 +29,92 @@ export const registerUser = async (name, email, password) => {
   try {
     const { user } = await createUserWithEmailAndPassword(auth, email, password);
     await updateProfile(user, { displayName: name });
+    return {
+      status: "success",
+      message: "You are successfully registered!",
+    };
   } catch (error) {
     return {
       status: "error",
       message: error.message,
     };
   }
-
-  return {
-    status: "success",
-    message: "You are successfully registered!",
-  };
 };
 
 export const login = async (email, password) => {
   try {
     await signInWithEmailAndPassword(auth, email, password);
+    return {
+      status: "success",
+      message: "You are successfully logged in!",
+    };
   } catch (error) {
     return {
       status: "error",
       message: error.message,
     };
   }
-
-  return {
-    status: "success",
-    message: "You are successfully logged in!",
-  };
 };
 
 export const logout = async () => {
   try {
     await signOut(auth);
+    return {
+      status: "success",
+      message: "You are successfully logged out!",
+    };
   } catch (error) {
     return {
       status: "error",
       message: error.message,
     };
   }
-
-  return {
-    status: "success",
-    message: "You are successfully logged out!",
-  };
 };
 
 export const resetPassword = async (email) => {
   try {
     await sendPasswordResetEmail(auth, email);
+    return {
+      status: "success",
+      message: "Please check your email to reset password",
+    };
   } catch (error) {
     return {
       status: "error",
       message: error.message,
     };
   }
-
-  return {
-    status: "success",
-    message: "Please check your email to reset password",
-  };
 };
 
 export const addCard = async (userId, payload) => {
   try {
     await addDoc(collection(db, userId), payload);
+    return {
+      status: "success",
+      message: "New card is successfully created!",
+    };
   } catch (error) {
     return {
       status: "error",
       message: error.message,
     };
   }
-
-  return {
-    status: "success",
-    message: "New card is successfully created!",
-  };
 };
 
 export const deleteCard = async (userId, cardId) => {
   if (cardId) {
     try {
       await deleteDoc(doc(db, userId, cardId));
+      return {
+        status: "success",
+        message: "Card has been deleted successfully",
+      };
     } catch (error) {
       return {
         status: "error",
         message: error.message,
       };
     }
-
-    return {
-      status: "success",
-      message: "Card has been deleted successfully",
-    };
   }
 };
 
@@ -136,3 +130,4 @@ export const getCards = (userId, callback) => {
     callback(cards);
   });
 };
+

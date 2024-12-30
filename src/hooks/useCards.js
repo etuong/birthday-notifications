@@ -8,7 +8,7 @@ const useCards = () => {
 
   const fetchCards = useCallback(
     async (userId) => {
-      const cards = await getCards(userId, setCards);
+      await getCards(userId, setCards);
     },
     [setCards]
   );

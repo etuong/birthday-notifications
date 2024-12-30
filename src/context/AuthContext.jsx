@@ -1,27 +1,17 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { auth } from "../services/Firebase";
 
 const AuthContext = React.createContext();
 
 const AuthProvider = ({ children }) => {
-  const [user, setUser] = React.useState(null);
+  const [user, setUser] = useState(null);
 
   useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged(
-      (_user) => {
-        setUser(_user);
-      },
-      (_error) => console.error(_error)
-    );
-
-    return () => {
-      unsubscribe();
-    };
+    const unsubscribe = auth.onAuthStateChanged(setUser, console.error);
+    return () => unsubscribe();
   }, []);
 
-  const value = { user };
-
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+  return <AuthContext.Provider value={{ user }}>{children}</AuthContext.Provider>;
 };
 
 export { AuthContext, AuthProvider };

@@ -1,18 +1,26 @@
-import React, { useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { getCards } from "../services/Firebase";
 import useAuth from "./useAuth";
 
-export const useCards = () => {
+const useCards = () => {
   const { user } = useAuth();
-  const [cards, setCards] = React.useState([]);
+  const [cards, setCards] = useState([]);
+
+  const fetchCards = useCallback(
+    async (userId) => {
+      const cards = await getCards(userId, setCards);
+    },
+    [setCards]
+  );
 
   useEffect(() => {
-    const unsubscribe = getCards(user.uid || "Test", setCards);
-
-    return () => {
-      unsubscribe();
-    };
-  }, [user]);
+    if (user) {
+      fetchCards(user.uid);
+    }
+  }, [user, fetchCards]);
 
   return cards;
 };
+
+
+export default useCards;

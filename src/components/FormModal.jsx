@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import DatePicker from "react-date-picker";
 
 const FormModal = ({ handleAction, modalId, initialValues }) => {
@@ -6,13 +6,77 @@ const FormModal = ({ handleAction, modalId, initialValues }) => {
   const [phone, setPhone] = useState(initialValues.phone);
   const [birthDate, setBirthDate] = useState(initialValues.birthDate);
 
-  const handleCreation = (event) => {
-    event.preventDefault();
-    document.querySelector(".modal-close").click();
-    setTimeout(async () => {
+  const handleCreation = useCallback(
+    (event) => {
+      event.preventDefault();
+      document.querySelector(".modal-close").click();
       handleAction({ name, phone, birthDate });
-    }, 300);
-  };
+    },
+    [handleAction, name, phone, birthDate]
+  );
+
+  const form = useMemo(
+    () => (
+      <form onSubmit={handleCreation}>
+        <div className="mb-3">
+          <label htmlFor="name" className="col-form-label">
+            Person's Name:
+          </label>
+          <input
+            type="text"
+            className="form-control"
+            onChange={({ target: { value } }) => setName(value)}
+            placeholder="Jane Doe"
+            id="name"
+            required
+          />
+        </div>
+
+        <div className="mb-3">
+          <label htmlFor="phone" className="col-form-label">
+            Person's Phone Number:
+          </label>
+          <input
+            type="tel"
+            className="form-control"
+            onChange={({ target: { value } }) => setPhone(value)}
+            placeholder="911-123-4567"
+            pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
+            id="phone"
+            required
+          />
+        </div>
+
+        <div className="mb-3">
+          <label htmlFor="date" className="col-form-label">
+            Birth Date:
+          </label>
+          <DatePicker
+            id="date"
+            onChange={setBirthDate}
+            clearIcon={null}
+            openCalendarOnFocus={false}
+            value={birthDate}
+            required
+          />
+        </div>
+
+        <div className="modal-footer">
+          <button
+            type="button"
+            className="btn btn-secondary"
+            data-bs-dismiss="modal"
+          >
+            Close
+          </button>
+          <button type="submit" className="btn btn-primary">
+            Add
+          </button>
+        </div>
+      </form>
+    ),
+    [handleCreation, name, phone, birthDate]
+  );
 
   return (
     <div
@@ -32,65 +96,7 @@ const FormModal = ({ handleAction, modalId, initialValues }) => {
               aria-label="Close"
             ></button>
           </div>
-          <div className="modal-body">
-            <form onSubmit={(e) => handleCreation(e)}>
-              <div className="mb-3">
-                <label htmlFor="name" className="col-form-label">
-                  Person's Name:
-                </label>
-                <input
-                  type="text"
-                  className="form-control"
-                  onChange={(event) => setName(event.target.value)}
-                  placeholder="Jane Doe"
-                  id="name"
-                  required
-                />
-              </div>
-
-              <div className="mb-3">
-                <label htmlFor="phone" className="col-form-label">
-                  Person's Phone Number:
-                </label>
-                <input
-                  type="tel"
-                  className="form-control"
-                  onChange={(event) => setPhone(event.target.value)}
-                  placeholder="911-123-4567"
-                  pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
-                  id="phone"
-                  required
-                />
-              </div>
-
-              <div className="mb-3">
-                <label htmlFor="date" className="col-form-label">
-                  Birth Date:
-                </label>
-                <DatePicker
-                  id="date"
-                  onChange={setBirthDate}
-                  clearIcon={null}
-                  openCalendarOnFocus={false}
-                  value={birthDate}
-                  required
-                />
-              </div>
-
-              <div className="modal-footer">
-                <button
-                  type="button"
-                  className="btn btn-secondary"
-                  data-bs-dismiss="modal"
-                >
-                  Close
-                </button>
-                <button type="submit" className="btn btn-primary">
-                  Add
-                </button>
-              </div>
-            </form>
-          </div>
+          <div className="modal-body">{form}</div>
         </div>
       </div>
     </div>
@@ -98,3 +104,4 @@ const FormModal = ({ handleAction, modalId, initialValues }) => {
 };
 
 export default FormModal;
+

@@ -1,23 +1,34 @@
 import React from "react";
 import { logout, addCard, deleteCard } from "../services/Firebase";
 import useAuth from "../hooks/useAuth";
-import { useCards } from "../hooks/useCards";
+import useCards from "../hooks/useCards";
 import Faq from "./Faq";
-import { Card } from "./Card";
+import Card from "./Card";
 import FormModal from "./FormModal";
+import "bootstrap/dist/css/bootstrap.min.css";
+import "bootstrap/dist/js/bootstrap.bundle.min";
 
-const Dashboard = (props) => {
+const Dashboard = ({ openToast }) => {
   const { user } = useAuth();
-  const cards = useCards();
+  const cards = useCards(user.uid);
 
-  const handleSignOut = async (event) => {
-    event.preventDefault();
+  const handleSignOut = async () => {
     const result = await logout();
-    props.openToast(result);
+    openToast(result);
   };
 
   const handleSearch = async (event) => {
     event.preventDefault();
+  };
+
+  const handleDelete = async (cardId) => {
+    const result = await deleteCard(user.uid, cardId);
+    openToast(result);
+  };
+
+  const handleAdd = async (dateObj) => {
+    const result = await addCard(user.uid, dateObj);
+    openToast(result);
   };
 
   return (
@@ -25,9 +36,7 @@ const Dashboard = (props) => {
       <nav className="navbar navbar-expand-lg navbar-light bg-light">
         <div className="container-fluid">
           <span className="navbar-brand">
-            {user.displayName
-              ? `Hello, ${user.displayName}!`
-              : "Birthday Notifications"}
+            {user?.displayName ? `Hello, ${user.displayName}!` : "Birthday Notifications"}
           </span>
           <button
             className="navbar-toggler"
@@ -60,11 +69,11 @@ const Dashboard = (props) => {
                   Faqs
                 </span>
               </li>
-              <li className="nav-item" onClick={(e) => handleSignOut(e)}>
+              <li className="nav-item" onClick={handleSignOut}>
                 <span className="nav-link">Sign Out</span>
               </li>
             </ul>
-            <form className="d-flex" onSubmit={(event) => handleSearch(event)}>
+            <form className="d-flex" onSubmit={handleSearch}>
               <input
                 className="form-control me-2"
                 type="search"
@@ -79,34 +88,23 @@ const Dashboard = (props) => {
         </div>
       </nav>
       <div className="card-container">
-        {cards.map((card) => {
-          return (
-            <Card
-              key={card.id}
-              card={card}
-              handleEdit={(_) => { }}
-              handleDelete={async (_) => {
-                const result = await deleteCard(user.uid, card.id);
-                props.openToast(result);
-              }}
-            />
-          );
-        })}
+        {cards?.map((card) => (
+          <Card
+            key={card.id}
+            card={card}
+            handleEdit={() => { }}
+            handleDelete={() => handleDelete(card.id)}
+          />
+        ))}
       </div>
       <FormModal
         modalId="addModal"
-        handleAction={async (dateObj) => {
-          const result = await addCard(user.uid, dateObj);
-          props.openToast(result);
-        }}
+        handleAction={handleAdd}
         initialValues={{ name: "", phone: "", birthDate: new Date() }}
       />
       <FormModal
         modalId="editModal"
-        handleAction={async (dateObj) => {
-          const result = await addCard(user.uid, dateObj);
-          props.openToast(result);
-        }}
+        handleAction={handleAdd}
         initialValues={{ name: "", phone: "", birthDate: new Date() }}
       />
       <Faq />
@@ -115,3 +113,5 @@ const Dashboard = (props) => {
 };
 
 export default Dashboard;
+
+

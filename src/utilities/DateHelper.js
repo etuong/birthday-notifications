@@ -1,5 +1,5 @@
 
-export const getDateInfo = (timestamp) => {
+export const GetDateInfo = (timestamp) => {
   const birthday = new Date(timestamp * 1000);
   const now = new Date();
 
@@ -35,6 +35,6 @@ export const getDateInfo = (timestamp) => {
   return { formattedBirthDate, daysToBirthday, age };
 };
 
-export function compareFn(a, b) {
+export function CompareFn(a, b) {
   return a.daysToBirthday - b.daysToBirthday;
 }

@@ -1,16 +1,24 @@
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min";
-import React from "react";
+import React, { useState } from "react";
 import useAuth from "../hooks/useAuth";
 import useCards from "../hooks/useCards";
-import { addCard, deleteCard, logout } from "../services/Firebase";
+import { addCard, deleteCard, logout, updateCard } from "../services/Firebase";
 import Card from "./Card";
+import FormModal from "./CardFormModal";
 import Faq from "./Faq";
-import FormModal from "./FormModal";
 
 const Dashboard = ({ openToast }) => {
   const { user } = useAuth();
   const cards = useCards(user.uid);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const [formState, setFormState] = useState({
+    id: -1,
+    name: "",
+    phone: "",
+    birthDate: new Date(),
+  });
 
   const handleSignOut = async () => {
     const result = await logout();
@@ -19,6 +27,7 @@ const Dashboard = ({ openToast }) => {
 
   const handleSearch = async (event) => {
     event.preventDefault();
+    setSearchQuery(event.target.value);
   };
 
   const handleDelete = async (cardId) => {
@@ -26,10 +35,26 @@ const Dashboard = ({ openToast }) => {
     openToast(result);
   };
 
-  const handleAdd = async (dateObj) => {
-    const result = await addCard(user.uid, dateObj);
+  const handleAdd = async () => {
+    const result = await addCard(user.uid, formState);
     openToast(result);
+    return result.status;
   };
+
+  const handleEdit = async () => {
+    const payload = {
+      name: formState.name,
+      phone: formState.phone,
+      birthDate: formState.birthDate,
+    };
+    const result = await updateCard(user.uid, formState.id, payload);
+    openToast(result);
+    return result.status;
+  };
+
+  const filteredCards = cards.filter((card) =>
+    card.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   return (
     <>
@@ -41,6 +66,7 @@ const Dashboard = ({ openToast }) => {
           <button
             className="navbar-toggler"
             type="button"
+            onClick={() => { setFormState({ name: "", phone: "", birthDate: new Date() }) }}
             data-bs-toggle="collapse"
             data-bs-target="#addModal"
             aria-controls="navbarScroll"
@@ -56,6 +82,7 @@ const Dashboard = ({ openToast }) => {
                   className="nav-link"
                   data-bs-toggle="modal"
                   data-bs-target="#addModal"
+                  onClick={() => { setFormState({ name: "", phone: "", birthDate: new Date() }) }}
                 >
                   Add
                 </span>
@@ -79,6 +106,8 @@ const Dashboard = ({ openToast }) => {
                 type="search"
                 placeholder="Search By Name"
                 aria-label="Search"
+                value={searchQuery}
+                onChange={handleSearch}
               />
               <button className="btn btn-outline-secondary" type="submit">
                 Search
@@ -88,24 +117,38 @@ const Dashboard = ({ openToast }) => {
         </div>
       </nav>
       <div className="card-container">
-        {cards?.map((card) => (
+        {filteredCards.map((card) => (
           <Card
             key={card.id}
             card={card}
-            handleEdit={() => { }}
+            handleEditForm={() => {
+              setFormState({
+                id: card.id,
+                name: card.name,
+                phone: card.phone,
+                birthDate: new Date(card.birthDate.seconds * 1000),
+              })
+            }}
             handleDelete={() => handleDelete(card.id)}
           />
         ))}
       </div>
+
       <FormModal
         modalId="addModal"
+        title="Add a New Birthday"
         handleAction={handleAdd}
-        initialValues={{ name: "", phone: "", birthDate: new Date() }}
+        formState={formState}
+        setFormState={setFormState}
+        closeClassName="close-add-modal"
       />
       <FormModal
         modalId="editModal"
-        handleAction={handleAdd}
-        initialValues={{ name: "", phone: "", birthDate: new Date() }}
+        title="Edit Birthday"
+        handleAction={handleEdit}
+        formState={formState}
+        setFormState={setFormState}
+        closeClassName="close-edit-modal"
       />
       <Faq />
     </>

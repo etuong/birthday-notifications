@@ -1,6 +1,6 @@
 import React from "react";
 
-const Card = React.memo(({ card, handleEdit, handleDelete }) => (
+const Card = React.memo(({ card, handleEditForm, handleDelete }) => (
   <div className="card border-dark mb-3" key={card.id}>
     <div className="card-header">
       <strong>{card.formattedBirthDate}</strong>
@@ -9,7 +9,7 @@ const Card = React.memo(({ card, handleEdit, handleDelete }) => (
           className="icon"
           data-bs-toggle="modal"
           data-bs-target="#editModal"
-          onClick={handleEdit}
+          onClick={handleEditForm}
         >
           ✏️
         </span>

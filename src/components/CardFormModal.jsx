@@ -1,48 +1,61 @@
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useMemo } from "react";
 import DatePicker from "react-date-picker";
 
-const FormModal = ({ handleAction, modalId, initialValues }) => {
-  const [name, setName] = useState(initialValues.name);
-  const [phone, setPhone] = useState(initialValues.phone);
-  const [birthDate, setBirthDate] = useState(initialValues.birthDate);
+const CardFormModal = ({ title, handleAction, modalId, formState, setFormState, closeClassName }) => {
 
-  const handleCreation = useCallback(
-    (event) => {
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormState((prevState) => ({ ...prevState, [name]: value }));
+  };
+
+  const handleDateChange = (date) => {
+    setFormState((prevState) => ({ ...prevState, birthDate: date }));
+  };
+
+  const handleSubmit = useCallback(
+    async (event) => {
       event.preventDefault();
-      document.querySelector(".modal-close").click();
-      handleAction({ name, phone, birthDate });
+      const status = await handleAction();
+      if (status === "success") {
+        const test = document.querySelector(`.${closeClassName}`);
+        test.click();
+      }
     },
-    [handleAction, name, phone, birthDate]
+    [handleAction, closeClassName]
   );
 
   const form = useMemo(
     () => (
-      <form onSubmit={handleCreation}>
+      <form onSubmit={handleSubmit}>
         <div className="mb-3">
           <label htmlFor="name" className="col-form-label">
-            Person's Name:
+            Name:
           </label>
           <input
             type="text"
             className="form-control"
-            onChange={({ target: { value } }) => setName(value)}
+            value={formState.name}
+            onChange={handleChange}
             placeholder="Jane Doe"
             id="name"
+            name="name"
             required
           />
         </div>
 
         <div className="mb-3">
           <label htmlFor="phone" className="col-form-label">
-            Person's Phone Number:
+            Phone Number:
           </label>
           <input
             type="tel"
             className="form-control"
-            onChange={({ target: { value } }) => setPhone(value)}
+            value={formState.phone}
+            onChange={handleChange}
             placeholder="911-123-4567"
             pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
             id="phone"
+            name="phone"
             required
           />
         </div>
@@ -53,10 +66,11 @@ const FormModal = ({ handleAction, modalId, initialValues }) => {
           </label>
           <DatePicker
             id="date"
-            onChange={setBirthDate}
+            name="birthDate"
+            value={formState.birthDate}
+            onChange={handleDateChange}
             clearIcon={null}
             openCalendarOnFocus={false}
-            value={birthDate}
             required
           />
         </div>
@@ -64,18 +78,18 @@ const FormModal = ({ handleAction, modalId, initialValues }) => {
         <div className="modal-footer">
           <button
             type="button"
-            className="btn btn-secondary"
+            className={`btn btn-secondary ${closeClassName}`}
             data-bs-dismiss="modal"
           >
             Close
           </button>
           <button type="submit" className="btn btn-primary">
-            Add
+            Save
           </button>
         </div>
       </form>
     ),
-    [handleCreation, name, phone, birthDate]
+    [handleSubmit, formState, closeClassName]
   );
 
   return (
@@ -88,7 +102,7 @@ const FormModal = ({ handleAction, modalId, initialValues }) => {
       <div className="modal-dialog">
         <div className="modal-content">
           <div className="modal-header">
-            <h5 className="modal-title">Add a New Birthday</h5>
+            <h5 className="modal-title">{title}</h5>
             <button
               type="button"
               className="btn-close modal-close"
@@ -103,5 +117,5 @@ const FormModal = ({ handleAction, modalId, initialValues }) => {
   );
 };
 
-export default FormModal;
+export default CardFormModal;
 

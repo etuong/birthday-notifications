@@ -1,23 +1,24 @@
 import { initializeApp } from "firebase/app";
 import {
-  getFirestore,
+  createUserWithEmailAndPassword,
+  getAuth,
+  sendPasswordResetEmail,
+  signInWithEmailAndPassword,
+  signOut,
+  updateProfile,
+} from "firebase/auth";
+import {
   addDoc,
   collection,
   deleteDoc,
   doc,
+  getFirestore,
   onSnapshot,
   query,
+  updateDoc,
 } from "firebase/firestore";
-import {
-  getAuth,
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-  sendPasswordResetEmail,
-  signOut,
-  updateProfile,
-} from "firebase/auth";
+import { CompareFn, GetDateInfo } from "../utilities/DateHelper";
 import { firebaseConfig } from "./Credentials";
-import { compareFn, getDateInfo } from "../utilities/DateHelper";
 
 const firebaseApp = initializeApp(firebaseConfig);
 const db = getFirestore(firebaseApp);
@@ -101,6 +102,22 @@ export const addCard = async (userId, payload) => {
   }
 };
 
+export const updateCard = async (userId, cardId, payload) => {
+  try {
+    const cardRef = doc(db, userId, cardId);
+    await updateDoc(cardRef, payload);
+    return {
+      status: "success",
+      message: "Card is successfully updated!",
+    };
+  } catch (error) {
+    return {
+      status: "error",
+      message: error.message,
+    };
+  }
+};
+
 export const deleteCard = async (userId, cardId) => {
   if (cardId) {
     try {
@@ -123,10 +140,10 @@ export const getCards = (userId, callback) => {
     const cards = querySnapshot.docs.map((doc) => ({
       id: doc.id,
       ...doc.data(),
-      ...getDateInfo(doc.data().birthDate.seconds),
+      ...GetDateInfo(doc.data().birthDate.seconds),
     }));
 
-    cards.sort(compareFn);
+    cards.sort(CompareFn);
     callback(cards);
   });
 };

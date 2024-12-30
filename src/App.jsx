@@ -11,7 +11,7 @@ const toastStyle = {
     borderRadius: "10px",
     fontSize: "18px",
   },
-  duration: 3500,
+  duration: 4000,
 };
 
 const App = memo(() => {

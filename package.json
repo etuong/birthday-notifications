@@ -16,7 +16,8 @@
     "react-date-picker": "^10.2.0",
     "react-dom": "^18.3.1",
     "react-hot-toast": "^2.4.1",
-    "sass": "^1.83.0"
+    "sass": "^1.83.0",
+    "sweetalert2": "^11.15.3"
   },
   "devDependencies": {
     "@eslint/js": "^9.17.0",

@@ -1,7 +1,7 @@
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min";
 import { connectFunctionsEmulator, httpsCallable } from "firebase/functions";
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import useAuth from "../hooks/useAuth";
 import useCards from "../hooks/useCards";
 import { addCard, deleteCard, functions, logout, updateCard } from "../services/Firebase";
@@ -18,7 +18,6 @@ const Dashboard = ({ openToast }) => {
   const { user } = useAuth();
   const cards = useCards(user.uid);
   const [searchQuery, setSearchQuery] = useState("");
-
   const [formState, setFormState] = useState({
     id: -1,
     name: "",
@@ -26,15 +25,15 @@ const Dashboard = ({ openToast }) => {
     birthDate: new Date(),
   });
 
-  const sendReminder = async () => {
+  const sendReminder = async (card) => {
     const sendReminderFunction = httpsCallable(functions, "sendEmail");
 
     try {
-      const message = ```
-      REMINDER: It's ${formState.name}'s birthday today! 🎉🎂
+      const message = `
+      REMINDER: ${card.name}'s birthday is on ${card.formattedBirthDate}! 🎉🎂
       Don't forget to wish them a happy birthday! 🎈🎁
-      Phone: ${formState.phone}
-      ```;
+      Phone: ${card.phone}
+      `;
       const result = await sendReminderFunction({ to: user.email, message });
       if (result.data.success) {
         console.log("Message sent successfully:", result.data.response);
@@ -68,7 +67,6 @@ const Dashboard = ({ openToast }) => {
   };
 
   const handleEdit = async () => {
-    sendReminder();
     const payload = {
       name: formState.name,
       phone: formState.phone,
@@ -79,8 +77,12 @@ const Dashboard = ({ openToast }) => {
     return result.status;
   };
 
-  const filteredCards = cards.filter((card) =>
-    card.name.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredCards = useMemo(
+    () =>
+      cards.filter((card) =>
+        card.name.toLowerCase().includes(searchQuery.toLowerCase())
+      ),
+    [cards, searchQuery]
   );
 
   return (
@@ -157,6 +159,7 @@ const Dashboard = ({ openToast }) => {
               })
             }}
             handleDelete={() => handleDelete(card.id)}
+            handleReminder={() => sendReminder(card)}
           />
         ))}
       </div>

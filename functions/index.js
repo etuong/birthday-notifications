@@ -1,5 +1,6 @@
 const functions = require("firebase-functions");
 const admin = require("firebase-admin");
+const { onSchedule } = require("firebase-functions/v2/scheduler");
 const nodemailer = require("nodemailer");
 const sendGrid = require("@sendgrid/mail");
 require('dotenv').config();
@@ -50,3 +51,35 @@ exports.sendEmail = functions.https.onCall(async ({ data }, context) => {
     return { success: false, error: error.message };
   }
 });
+
+exports.scheduleBirthdayEmails = onSchedule('every day 10:00', (async (event) => {
+  const today = new Date();
+  const month = today.getMonth() + 1; // Months are zero-based
+  const day = today.getDate();
+
+  try {
+    const usersSnapshot = await db.collection('users').get();
+    usersSnapshot.forEach(async (userDoc) => {
+      const userData = userDoc.data();
+      const userBirthDate = new Date(userData.birthDate.seconds * 1000);
+      if (userBirthDate.getMonth() + 1 === month && userBirthDate.getDate() === day) {
+        const text = `
+      REMINDER: It's ${userData.name}'s birthday today! 🎉🎂
+      Don't forget to wish them a happy birthday! 🎈🎁
+      Phone: ${userData.phone}
+      `;
+        const msg = {
+          to: userData.email,
+          from: process.env.EMAIL_USER,
+          subject: "Happy Birthday!",
+          text,
+        };
+        await sendGrid.send(msg);
+      }
+    });
+    return null;
+  } catch (error) {
+    console.error("Error sending birthday emails:", error);
+    return null;
+  }
+}));

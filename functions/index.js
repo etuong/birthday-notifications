@@ -6,6 +6,7 @@ const sendGrid = require("@sendgrid/mail");
 require('dotenv').config();
 
 admin.initializeApp();
+const db = admin.firestore();
 
 // Email service credentials
 const emailService = process.env.EMAIL_SERVICE;
@@ -52,13 +53,13 @@ exports.sendEmail = functions.https.onCall(async ({ data }, context) => {
   }
 });
 
-exports.scheduleBirthdayEmails = onSchedule('every day 10:00', (async (event) => {
+const sendBirthdayEmails = async () => {
   const today = new Date();
   const month = today.getMonth() + 1; // Months are zero-based
   const day = today.getDate();
 
   try {
-    const usersSnapshot = await db.collection('users').get();
+    const usersSnapshot = await db.collection('K3jCgYK0SNgNIsVWsuBMjUCw4U83').get();
     usersSnapshot.forEach(async (userDoc) => {
       const userData = userDoc.data();
       const userBirthDate = new Date(userData.birthDate.seconds * 1000);
@@ -82,4 +83,13 @@ exports.scheduleBirthdayEmails = onSchedule('every day 10:00', (async (event) =>
     console.error("Error sending birthday emails:", error);
     return null;
   }
+}
+
+exports.scheduleBirthdayEmails = onSchedule('every day 10:00', (async (event) => {
+  return sendBirthdayEmails();
 }));
+
+exports.triggerBirthdayEmails = functions.https.onRequest(async (req, res) => {
+  await sendBirthdayEmails();
+  res.send("Birthday emails sent.");
+});

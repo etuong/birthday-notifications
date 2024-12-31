@@ -38,7 +38,7 @@ const Card = React.memo(({ card, handleEditForm, handleReminder, handleDelete })
   };
 
   return (
-    <div className="card border-dark mb-3" key={card.id}>
+    <div className="card mb-3" key={card.id}>
       <div className="card-header">
         <strong>{card.formattedBirthDate}</strong>
         <div className="controls">
@@ -58,7 +58,7 @@ const Card = React.memo(({ card, handleEditForm, handleReminder, handleDelete })
           </span>
         </div>
       </div>
-      <div className="card-body text-dark">
+      <div className="card-body">
         <h5 className="card-title">{card.name}</h5>
         <h6 className="card-subtitle mb-2 text-muted">{card.phone}</h6>
         <p className="card-text">

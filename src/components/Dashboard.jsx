@@ -8,6 +8,7 @@ import { addCard, deleteCard, functions, logout, updateCard } from "../services/
 import Card from "./Card";
 import FormModal from "./CardFormModal";
 import Faq from "./Faq";
+import { useTheme } from '../context/ThemeContext';
 
 if (import.meta.env.VITE_APP_ENV === "development") {
   // Connect to the local emulator
@@ -17,6 +18,7 @@ if (import.meta.env.VITE_APP_ENV === "development") {
 const Dashboard = ({ openToast }) => {
   const { user } = useAuth();
   const cards = useCards(user.uid);
+  const { theme, toggleTheme } = useTheme();
   const [searchQuery, setSearchQuery] = useState("");
   const [formState, setFormState] = useState({
     id: -1,
@@ -86,8 +88,8 @@ const Dashboard = ({ openToast }) => {
   );
 
   return (
-    <>
-      <nav className="navbar navbar-expand-lg navbar-light bg-light">
+    <div>
+      <nav className="navbar navbar-expand-lg">
         <div className="container-fluid">
           <span className="navbar-brand">
             {user?.displayName ? `Hello, ${user.displayName}!` : "Birthday Notifications"}
@@ -129,6 +131,18 @@ const Dashboard = ({ openToast }) => {
                 <span className="nav-link">Sign Out</span>
               </li>
             </ul>
+            <div className="form-check form-switch mx-4">
+              <input
+                className="form-check-input"
+                type="checkbox"
+                id="themeToggle"
+                checked={theme === 'dark'}
+                onChange={toggleTheme}
+              />
+              <label className="form-check-label" htmlFor="themeToggle">
+                {theme === 'light' ? 'Light' : 'Dark'}
+              </label>
+            </div>
             <form className="d-flex" onSubmit={handleSearch}>
               <input
                 className="form-control me-2"
@@ -181,7 +195,7 @@ const Dashboard = ({ openToast }) => {
         closeClassName="close-edit-modal"
       />
       <Faq />
-    </>
+    </div>
   );
 };
 

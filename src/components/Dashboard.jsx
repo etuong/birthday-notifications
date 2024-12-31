@@ -1,12 +1,17 @@
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min";
+import { connectFunctionsEmulator, httpsCallable } from "firebase/functions";
 import React, { useState } from "react";
 import useAuth from "../hooks/useAuth";
 import useCards from "../hooks/useCards";
-import { addCard, deleteCard, logout, updateCard } from "../services/Firebase";
+import { addCard, deleteCard, functions, logout, updateCard } from "../services/Firebase";
 import Card from "./Card";
 import FormModal from "./CardFormModal";
 import Faq from "./Faq";
+
+// Connect to the local emulator
+connectFunctionsEmulator(functions, "localhost", 5001);
+
 
 const Dashboard = ({ openToast }) => {
   const { user } = useAuth();
@@ -19,6 +24,21 @@ const Dashboard = ({ openToast }) => {
     phone: "",
     birthDate: new Date(),
   });
+
+  const sendTextMessage = async () => {
+    const sendTextMessageFunction = httpsCallable(functions, "sendTextMessage");
+
+    try {
+      const result = await sendTextMessageFunction({ to: "+14123978149", message: "Hello, World!" });
+      if (result.data.success) {
+        console.log("Message sent successfully:", result.data.response);
+      } else {
+        console.error("Error sending message:", result.data.error);
+      }
+    } catch (error) {
+      console.error("Error calling function:", error);
+    }
+  };
 
   const handleSignOut = async () => {
     const result = await logout();
@@ -42,6 +62,7 @@ const Dashboard = ({ openToast }) => {
   };
 
   const handleEdit = async () => {
+    sendTextMessage();
     const payload = {
       name: formState.name,
       phone: formState.phone,

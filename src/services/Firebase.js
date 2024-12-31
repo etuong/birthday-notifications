@@ -17,11 +17,13 @@ import {
   query,
   updateDoc,
 } from "firebase/firestore";
+import { getFunctions } from "firebase/functions";
 import { CompareFn, GetDateInfo } from "../utilities/DateHelper";
 import { firebaseConfig } from "./Credentials";
 
 const firebaseApp = initializeApp(firebaseConfig);
 const db = getFirestore(firebaseApp);
+export const functions = getFunctions(firebaseApp);
 export const auth = getAuth(firebaseApp);
 
 export default firebaseApp;

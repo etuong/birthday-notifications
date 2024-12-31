@@ -1,6 +1,7 @@
 const functions = require("firebase-functions");
 const admin = require("firebase-admin");
 const nodemailer = require("nodemailer");
+const sendGrid = require("@sendgrid/mail");
 require('dotenv').config();
 
 admin.initializeApp();
@@ -10,35 +11,40 @@ const emailService = process.env.EMAIL_SERVICE;
 const emailUser = process.env.EMAIL_USER;
 const emailPass = process.env.EMAIL_PASS;
 
-const transporter = nodemailer.createTransport({
-  service: emailService,
-  auth: {
-    user: emailUser,
-    pass: emailPass,
-  },
-});
+// SendGrid API key
+const sendGridApiKey = process.env.SENDGRID_API_KEY;
+sendGrid.setApiKey(sendGridApiKey);
 
-exports.sendEmail = functions.https.onCall(async (data, context) => {
-  // const { to, subject, text } = data;
+exports.sendEmail = functions.https.onCall(async ({ data }, context) => {
+  const { to, message } = data;
+  console.log(to)
+  console.log(message)
 
-  console.log("Email User:", emailUser);
-  console.log("To:", "ethanator360@yahoo.com");
-  console.log("Subject:", "Test Email");
-  console.log("Text:", "This is a test email");
-
-  if (!to || !subject || !text) {
-    return { success: false, error: "Missing 'to', 'subject', or 'text' parameter" };
+  if (!to || !message) {
+    return { success: false, error: "Missing 'to' or 'message'" };
   }
 
-  const mailOptions = {
-    from: emailUser,
+  const options = {
     to: to,
-    subject: subject,
-    text: text,
+    from: emailUser,
+    subject: "Birthday Reminder",
+    text: message,
   };
 
   try {
-    const response = await transporter.sendMail(mailOptions);
+    // Wtih SendGrid
+    const response = await sendGrid.send(options);
+
+    // With Nodemailer
+    // const transporter = nodemailer.createTransport({
+    //   service: emailService,
+    //   auth: {
+    //     user: emailUser,
+    //     pass: emailPass,
+    //   },
+    // });
+    // await transporter.sendMail(options);
+
     return { success: true, response };
   } catch (error) {
     return { success: false, error: error.message };

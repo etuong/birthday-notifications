@@ -9,9 +9,10 @@ import Card from "./Card";
 import FormModal from "./CardFormModal";
 import Faq from "./Faq";
 
-// Connect to the local emulator
-connectFunctionsEmulator(functions, "localhost", 5001);
-
+if (import.meta.env.VITE_APP_ENV === "development") {
+  // Connect to the local emulator
+  connectFunctionsEmulator(functions, "localhost", 5001);
+}
 
 const Dashboard = ({ openToast }) => {
   const { user } = useAuth();
@@ -25,11 +26,16 @@ const Dashboard = ({ openToast }) => {
     birthDate: new Date(),
   });
 
-  const sendTextMessage = async () => {
-    const sendTextMessageFunction = httpsCallable(functions, "sendTextMessage");
+  const sendReminder = async () => {
+    const sendReminderFunction = httpsCallable(functions, "sendEmail");
 
     try {
-      const result = await sendTextMessageFunction({ to: "+14123978149", message: "Hello, World!" });
+      const message = ```
+      REMINDER: It's ${formState.name}'s birthday today! 🎉🎂
+      Don't forget to wish them a happy birthday! 🎈🎁
+      Phone: ${formState.phone}
+      ```;
+      const result = await sendReminderFunction({ to: user.email, message });
       if (result.data.success) {
         console.log("Message sent successfully:", result.data.response);
       } else {
@@ -62,7 +68,7 @@ const Dashboard = ({ openToast }) => {
   };
 
   const handleEdit = async () => {
-    sendTextMessage();
+    sendReminder();
     const payload = {
       name: formState.name,
       phone: formState.phone,

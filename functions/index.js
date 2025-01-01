@@ -59,31 +59,42 @@ const sendBirthdayEmails = async () => {
   const day = today.getDate();
 
   try {
-    const usersSnapshot = await db.collection('K3jCgYK0SNgNIsVWsuBMjUCw4U83').get();
-    usersSnapshot.forEach(async (userDoc) => {
-      const userData = userDoc.data();
-      const userBirthDate = new Date(userData.birthDate.seconds * 1000);
-      if (userBirthDate.getMonth() + 1 === month && userBirthDate.getDate() === day) {
-        const text = `
-      REMINDER: It's ${userData.name}'s birthday today! 🎉🎂
-      Don't forget to wish them a happy birthday! 🎈🎁
-      Phone: ${userData.phone}
-      `;
-        const msg = {
-          to: userData.email,
-          from: process.env.EMAIL_USER,
-          subject: "Happy Birthday!",
-          text,
-        };
-        await sendGrid.send(msg);
+    const listAllUsers = async (nextPageToken) => {
+      const listUsersResult = await admin.auth().listUsers(1000, nextPageToken);
+      listUsersResult.users.forEach(async (userRecord) => {
+        const usersSnapshot = await db.collection(userRecord.uid).get();
+        usersSnapshot.forEach(async (userDoc) => {
+          const userData = userDoc.data();
+          const userBirthDate = new Date(userData.birthDate.seconds * 1000);
+          if (userBirthDate.getMonth() + 1 === month && userBirthDate.getDate() === day) {
+            const text = `
+          REMINDER: It's ${userData.name}'s birthday today! 🎉🎂
+          Don't forget to wish them a happy birthday! 🎈🎁
+          Phone: ${userData.phone}
+          `;
+            const msg = {
+              to: userRecord.email,
+              from: process.env.EMAIL_USER,
+              subject: "Happy Birthday!",
+              text,
+            };
+            await sendGrid.send(msg);
+          }
+        });
+      });
+
+      if (listUsersResult.pageToken) {
+        await listAllUsers(listUsersResult.pageToken);
       }
-    });
+    };
+
+    await listAllUsers();
     return null;
   } catch (error) {
     console.error("Error sending birthday emails:", error);
     return null;
   }
-}
+};
 
 exports.scheduleBirthdayEmails = onSchedule('every day 10:00', (async (event) => {
   return sendBirthdayEmails();
@@ -91,5 +102,5 @@ exports.scheduleBirthdayEmails = onSchedule('every day 10:00', (async (event) =>
 
 exports.triggerBirthdayEmails = functions.https.onRequest(async (req, res) => {
   await sendBirthdayEmails();
-  res.send("Birthday emails sent.");
+  res.send("Birthday reminders sent.");
 });

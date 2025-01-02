@@ -10,14 +10,22 @@ const Card = React.memo(({ card, handleEditForm, handleReminder, handleDelete })
       showCancelButton: true,
       confirmButtonText: 'Yes, email me!',
       cancelButtonText: 'No, cancel',
-    }).then((result) => {
+    }).then(async (result) => {
       if (result.isConfirmed) {
-        handleReminder(card);
-        Swal.fire(
-          'Sent!',
-          'The reminder has been sent.',
-          'success'
-        );
+        const result = await handleReminder(card);
+        if (result && result.data.success) {
+          Swal.fire(
+            'Sent!',
+            'The reminder has been sent.',
+            'success'
+          );
+        } else {
+          Swal.fire(
+            'Not Sent!',
+            'The reminder has not been sent. There is an error!',
+            'error'
+          );
+        }
       }
     });
   };

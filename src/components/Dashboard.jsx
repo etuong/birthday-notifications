@@ -42,6 +42,7 @@ const Dashboard = ({ openToast }) => {
       } else {
         console.error("Error sending message:", result.data.error);
       }
+      return result
     } catch (error) {
       console.error("Error calling function:", error);
     }

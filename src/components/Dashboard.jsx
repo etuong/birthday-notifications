@@ -42,7 +42,7 @@ const Dashboard = ({ openToast }) => {
       } else {
         console.error("Error sending message:", result.data.error);
       }
-      return result
+      return result;
     } catch (error) {
       console.error("Error calling function:", error);
     }
@@ -160,6 +160,41 @@ const Dashboard = ({ openToast }) => {
           </div>
         </div>
       </nav>
+      <div className="table-responsive">
+        <table className="table table-striped">
+          <thead>
+            <tr>
+              <th scope="col">Name</th>
+              <th scope="col">Birth Date</th>
+              <th scope="col">Phone</th>
+              <th scope="col">Description</th>
+              <th scope="col">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {filteredCards.map((card) => (
+              <tr key={card.id}>
+                <td>{card.name}</td>
+                <td>{card.formattedBirthDate}</td>
+                <td>{card.phone}</td>
+                <td> Will turn {card.age} years old in {card.daysToBirthday}{" "}
+                  days!</td>
+                <td>
+                  <button className="btn btn-info" onClick={() => sendReminder(card)}>
+                    Remind
+                  </button>
+                  <button className="btn btn-primary" onClick={() => sendReminder(card)}>
+                    Remind
+                  </button>
+                  <button className="btn btn-error" onClick={() => sendReminder(card)}>
+                    Remind
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
       <div className="card-container">
         {filteredCards.map((card) => (
           <Card

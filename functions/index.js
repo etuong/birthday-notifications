@@ -65,20 +65,22 @@ const sendBirthdayEmails = async () => {
         const usersSnapshot = await db.collection(userRecord.uid).get();
         usersSnapshot.forEach(async (userDoc) => {
           const userData = userDoc.data();
-          const userBirthDate = new Date(userData.birthDate.seconds * 1000);
-          if (userBirthDate.getMonth() + 1 === month && userBirthDate.getDate() === day) {
-            const text = `
+          if (!userData.isDisabled) {
+            const userBirthDate = new Date(userData.birthDate.seconds * 1000);
+            if (userBirthDate.getMonth() + 1 === month && userBirthDate.getDate() === day) {
+              const text = `
           REMINDER: It's ${userData.name}'s birthday today! 🎉🎂
           Don't forget to wish them a happy birthday! 🎈🎁
           Phone: ${userData.phone}
           `;
-            const msg = {
-              to: userRecord.email,
-              from: process.env.EMAIL_USER,
-              subject: "Happy Birthday!",
-              text,
-            };
-            await sendGrid.send(msg);
+              const msg = {
+                to: userRecord.email,
+                from: process.env.EMAIL_USER,
+                subject: "Happy Birthday!",
+                text,
+              };
+              await sendGrid.send(msg);
+            }
           }
         });
       });

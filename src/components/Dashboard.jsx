@@ -2,13 +2,13 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min";
 import { connectFunctionsEmulator, httpsCallable } from "firebase/functions";
 import React, { useMemo, useState } from "react";
+import { useTheme } from '../context/ThemeContext';
 import useAuth from "../hooks/useAuth";
 import useCards from "../hooks/useCards";
 import { addCard, deleteCard, functions, logout, updateCard } from "../services/Firebase";
 import Card from "./Card";
 import FormModal from "./CardFormModal";
 import Faq from "./Faq";
-import { useTheme } from '../context/ThemeContext';
 
 if (import.meta.env.VITE_APP_ENV === "development") {
   // Connect to the local emulator
@@ -24,6 +24,7 @@ const Dashboard = ({ openToast }) => {
     id: -1,
     name: "",
     phone: "",
+    isDisabled: false,
     birthDate: new Date(),
   });
 
@@ -69,13 +70,8 @@ const Dashboard = ({ openToast }) => {
     return result.status;
   };
 
-  const handleEdit = async () => {
-    const payload = {
-      name: formState.name,
-      phone: formState.phone,
-      birthDate: formState.birthDate,
-    };
-    const result = await updateCard(user.uid, formState.id, payload);
+  const handleEdit = async (payload) => {
+    const result = await updateCard(user.uid, payload.id, payload);
     openToast(result);
     return result.status;
   };
@@ -98,9 +94,8 @@ const Dashboard = ({ openToast }) => {
           <button
             className="navbar-toggler"
             type="button"
-            onClick={() => { setFormState({ name: "", phone: "", birthDate: new Date() }) }}
             data-bs-toggle="collapse"
-            data-bs-target="#addModal"
+            data-bs-target="#navbarScroll"
             aria-controls="navbarScroll"
             aria-expanded="false"
             aria-label="Toggle navigation"
@@ -114,7 +109,7 @@ const Dashboard = ({ openToast }) => {
                   className="nav-link"
                   data-bs-toggle="modal"
                   data-bs-target="#addModal"
-                  onClick={() => { setFormState({ name: "", phone: "", birthDate: new Date() }) }}
+                  onClick={() => { setFormState({ name: "", phone: "", isDisabled: false, birthDate: new Date() }) }}
                 >
                   Add
                 </span>
@@ -132,7 +127,7 @@ const Dashboard = ({ openToast }) => {
                 <span className="nav-link">Sign Out</span>
               </li>
             </ul>
-            <div className="form-check form-switch mx-4">
+            <div className="form-check form-switch me-4">
               <input
                 className="form-check-input"
                 type="checkbox"
@@ -160,41 +155,6 @@ const Dashboard = ({ openToast }) => {
           </div>
         </div>
       </nav>
-      <div className="table-responsive">
-        <table className="table table-striped">
-          <thead>
-            <tr>
-              <th scope="col">Name</th>
-              <th scope="col">Birth Date</th>
-              <th scope="col">Phone</th>
-              <th scope="col">Description</th>
-              <th scope="col">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredCards.map((card) => (
-              <tr key={card.id}>
-                <td>{card.name}</td>
-                <td>{card.formattedBirthDate}</td>
-                <td>{card.phone}</td>
-                <td> Will turn {card.age} years old in {card.daysToBirthday}{" "}
-                  days!</td>
-                <td>
-                  <button className="btn btn-info" onClick={() => sendReminder(card)}>
-                    Remind
-                  </button>
-                  <button className="btn btn-primary" onClick={() => sendReminder(card)}>
-                    Remind
-                  </button>
-                  <button className="btn btn-error" onClick={() => sendReminder(card)}>
-                    Remind
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
       <div className="card-container">
         {filteredCards.map((card) => (
           <Card
@@ -205,9 +165,11 @@ const Dashboard = ({ openToast }) => {
                 id: card.id,
                 name: card.name,
                 phone: card.phone,
+                isDisabled: card.isDisabled,
                 birthDate: new Date(card.birthDate.seconds * 1000),
               })
             }}
+            handleDisable={() => handleEdit({ id: card.id, isDisabled: !card.isDisabled })}
             handleDelete={() => handleDelete(card.id)}
             handleReminder={() => sendReminder(card)}
           />
@@ -225,7 +187,7 @@ const Dashboard = ({ openToast }) => {
       <FormModal
         modalId="editModal"
         title="Edit Birthday"
-        handleAction={handleEdit}
+        handleAction={() => handleEdit({ ...formState })}
         formState={formState}
         setFormState={setFormState}
         closeClassName="close-edit-modal"

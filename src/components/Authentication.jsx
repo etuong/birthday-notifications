@@ -42,133 +42,129 @@ const Authentication = ({ openToast }) => {
 
   const signinForm = useMemo(
     () => (
-      <div className="auth-form-container">
-        <form
-          className="auth-form"
-          onSubmit={(e) => {
-            e.preventDefault();
-            handleAction(() => login(email.value, password.value));
-          }}
-        >
-          <div className="auth-form-content">
-            <h3 className="auth-form-title">Sign In</h3>
-            <div className="text-center">
-              Not registered yet?{" "}
-              <span className="link-primary" onClick={toggleMode}>
-                Register
-              </span>
-            </div>
-            <div className="form-group mt-3">
-              <label>Email address</label>
-              <input
-                type="email"
-                required
-                className="form-control mt-1"
-                placeholder="Enter email"
-                {...email}
-              />
-            </div>
-            <div className="form-group mt-3">
-              <label>Password</label>
-              <input
-                type="password"
-                required
-                className="form-control mt-1"
-                placeholder="Enter password"
-                {...password}
-              />
-            </div>
-            <ErrorMessages errorMessages={errors} />
-            <div className="d-grid gap-2 mt-3">
-              <button type="submit" className="btn btn-secondary">
-                Submit
-              </button>
-            </div>
-            <p className="text-center mt-2">
-              Forgot{" "}
-              <span
-                className="link-primary"
-                onClick={() => handleAction(() => resetPassword(email.value))}
-              >
-                Password?
-              </span>
-            </p>
+      <form
+        className="auth-form"
+        onSubmit={(e) => {
+          e.preventDefault();
+          handleAction(() => login(email.value, password.value));
+        }}
+      >
+        <div className="auth-form-content">
+          <h3 className="auth-form-title">Sign In</h3>
+          <div className="text-center">
+            Not registered yet?{" "}
+            <span className="link-primary" onClick={toggleMode}>
+              Register
+            </span>
           </div>
-        </form>
-      </div>
+          <div className="form-group mt-3">
+            <label>Email address</label>
+            <input
+              type="email"
+              required
+              className="form-control mt-1"
+              placeholder="Enter email"
+              {...email}
+            />
+          </div>
+          <div className="form-group mt-3">
+            <label>Password</label>
+            <input
+              type="password"
+              required
+              className="form-control mt-1"
+              placeholder="Enter password"
+              {...password}
+            />
+          </div>
+          <ErrorMessages errorMessages={errors} />
+          <div className="d-grid gap-2 mt-3">
+            <button type="submit" className="btn btn-secondary">
+              Submit
+            </button>
+          </div>
+          <p className="text-center mt-2">
+            Forgot{" "}
+            <span
+              className="link-primary"
+              onClick={() => handleAction(() => resetPassword(email.value))}
+            >
+              Password?
+            </span>
+          </p>
+        </div>
+      </form>
     ),
     [email, password, errors, toggleMode, handleAction]
   );
 
   const signupForm = useMemo(
     () => (
-      <div className="auth-form-container">
-        <form
-          className="auth-form"
-          onSubmit={(e) => {
-            e.preventDefault();
-            handleAction(() =>
-              registerUser(name.value, email.value, password.value)
-            );
-          }}
-        >
-          <div className="auth-form-content">
-            <h3 className="auth-form-title">Register</h3>
-            <div className="text-center">
-              Already registered?{" "}
-              <span className="link-primary" onClick={toggleMode}>
-                Sign In
-              </span>
-            </div>
-            <div className="form-group mt-3">
-              <label>Name</label>
-              <input
-                type="text"
-                required
-                className="form-control mt-1"
-                placeholder="e.g Jane Doe"
-                {...name}
-              />
-            </div>
-            <div className="form-group mt-3">
-              <label>Email address</label>
-              <input
-                type="email"
-                required
-                className="form-control mt-1"
-                placeholder="Email Address"
-                {...email}
-              />
-            </div>
-            <div className="form-group mt-3">
-              <label>Password</label>
-              <input
-                type="password"
-                required
-                className="form-control mt-1"
-                placeholder="Password"
-                {...password}
-              />
-            </div>
-            <div className="form-group mt-3">
-              <label>Please Enter Password Again</label>
-              <input
-                type="password"
-                required
-                className="form-control mt-1"
-                placeholder="Password"
-                {...confirmPassword}
-              />
-            </div>
-            <ErrorMessages errorMessages={errors} />
-            <div className="d-grid gap-2 mt-3">
-              <button type="submit" className="btn btn-secondary">
-                Register
-              </button>
-            </div>
+      <form
+        className="auth-form"
+        onSubmit={(e) => {
+          e.preventDefault();
+          handleAction(() =>
+            registerUser(name.value, email.value, password.value)
+          );
+        }}
+      >
+        <div className="auth-form-content">
+          <h3 className="auth-form-title">Register</h3>
+          <div className="text-center">
+            Already registered?{" "}
+            <span className="link-primary" onClick={toggleMode}>
+              Sign In
+            </span>
           </div>
-        </form>
-      </div>
+          <div className="form-group mt-3">
+            <label>Name</label>
+            <input
+              type="text"
+              required
+              className="form-control mt-1"
+              placeholder="e.g Jane Doe"
+              {...name}
+            />
+          </div>
+          <div className="form-group mt-3">
+            <label>Email address</label>
+            <input
+              type="email"
+              required
+              className="form-control mt-1"
+              placeholder="Email Address"
+              {...email}
+            />
+          </div>
+          <div className="form-group mt-3">
+            <label>Password</label>
+            <input
+              type="password"
+              required
+              className="form-control mt-1"
+              placeholder="Password"
+              {...password}
+            />
+          </div>
+          <div className="form-group mt-3">
+            <label>Please Enter Password Again</label>
+            <input
+              type="password"
+              required
+              className="form-control mt-1"
+              placeholder="Password"
+              {...confirmPassword}
+            />
+          </div>
+          <ErrorMessages errorMessages={errors} />
+          <div className="d-grid gap-2 mt-3">
+            <button type="submit" className="btn btn-secondary">
+              Register
+            </button>
+          </div>
+        </div>
+      </form>
     ),
     [name, email, password, confirmPassword, errors, toggleMode, handleAction]
   );

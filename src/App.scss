@@ -12,15 +12,19 @@ body {
   text-align: center;
 }
 
+.instructions {
+  width: 370px;
+  text-align: left;
+  margin: auto;
+}
+
 .auth-form-container {
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 100vw;
-  height: 100vh;
 
   .auth-form {
-    width: 420px;
+    width: 350px;
     box-shadow: rgb(0 0 0 / 16%) 1px 1px 10px;
     padding-top: 30px;
     padding-bottom: 20px;
@@ -107,6 +111,16 @@ body {
   .card {
     width: 16em;
     margin: 5px;
+
+    .card-body {
+      &.enabled {
+        background-color: #ffffff;
+      }
+
+      &.disabled {
+        background-color: #e9ecef;
+      }
+    }
 
     .card-header {
       display: flex;

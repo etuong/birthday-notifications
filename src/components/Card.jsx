@@ -1,11 +1,11 @@
 import React from "react";
 import Swal from "sweetalert2";
 
-const Card = React.memo(({ card, handleEditForm, handleReminder, handleDelete }) => {
+const Card = React.memo(({ card, handleEditForm, handleReminder, handleDisable, handleDelete }) => {
   const confirmAndHandleReminder = () => {
     Swal.fire({
       title: 'Are you sure?',
-      text: `Do you want to send a reminder for ${card.name}'s birthday?`,
+      text: `Do you want to send a reminder for ${card.name}'s birthday now?`,
       icon: 'question',
       showCancelButton: true,
       confirmButtonText: 'Yes, email me!',
@@ -55,20 +55,24 @@ const Card = React.memo(({ card, handleEditForm, handleReminder, handleDelete })
             data-bs-toggle="modal"
             data-bs-target="#editModal"
             onClick={handleEditForm}
+            title="Edit"
           >
             ✏️
           </span>
-          <span className="icon" onClick={confirmAndHandleReminder}>
-            🕔
+          <span className="icon" onClick={confirmAndHandleReminder} title="Remind">
+            ⏰
           </span>
-          <span className="icon" onClick={confirmAndHandleDelete}>
+          <span className="icon" onClick={handleDisable} title="Disable">
+            🚫
+          </span>
+          <span className="icon" onClick={confirmAndHandleDelete} title="Delete">
             ❌
           </span>
         </div>
       </div>
-      <div className="card-body">
+      <div className={`card-body ${card.isDisabled ? 'disabled text-secondary' : ''}`}>
         <h5 className="card-title">{card.name}</h5>
-        <h6 className="card-subtitle mb-2 text-muted">{card.phone}</h6>
+        <h6 className="card-subtitle mb-2">{card.phone}</h6>
         <p className="card-text">
           Will turn {card.age} years old in {card.daysToBirthday}{" "}
           days!

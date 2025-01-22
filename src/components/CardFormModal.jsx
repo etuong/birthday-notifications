@@ -56,7 +56,6 @@ const CardFormModal = ({ title, handleAction, modalId, formState, setFormState, 
             pattern="^\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}$"
             id="phone"
             name="phone"
-            required
           />
         </div>
 

@@ -53,7 +53,7 @@ const CardFormModal = ({ title, handleAction, modalId, formState, setFormState, 
             value={formState.phone}
             onChange={handleChange}
             placeholder="911-123-4567"
-            pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
+            pattern="^\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}$"
             id="phone"
             name="phone"
             required

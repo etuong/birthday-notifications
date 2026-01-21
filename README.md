@@ -18,7 +18,18 @@ Not at the moment but future enhancements are in the works to send a birthday te
 
 ### What is tech stack?
 
-This app was built with Vite (React) on the front, Firebase (Authentication, Document Database, File Storage, Serverless Functions) on the back, and SendGrid to send emails.
+This app was built with Vite (React) on the front, Firebase (Authentication, Document Database, File Storage, Serverless Functions) on the back, and an SMTP server to send emails.
+
+### To use SendGrid
+
+In functions\index.js
+
+1. const sendGrid = require("@sendgrid/mail");
+1. const sendGridApiKey = process.env.SENDGRID_API_KEY;
+1. sendGrid.setApiKey(sendGridApiKey);
+1. await sendGrid.send(options);
+
+### To use Gmail
 
 ## Development
 

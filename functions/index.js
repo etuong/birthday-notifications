@@ -2,7 +2,6 @@ const functions = require("firebase-functions");
 const admin = require("firebase-admin");
 const { onSchedule } = require("firebase-functions/v2/scheduler");
 const nodemailer = require("nodemailer");
-const sendGrid = require("@sendgrid/mail");
 require('dotenv').config();
 
 admin.initializeApp();
@@ -13,41 +12,32 @@ const emailService = process.env.EMAIL_SERVICE;
 const emailUser = process.env.EMAIL_USER;
 const emailPass = process.env.EMAIL_PASS;
 
-// SendGrid API key
-const sendGridApiKey = process.env.SENDGRID_API_KEY;
-sendGrid.setApiKey(sendGridApiKey);
+const transporter = nodemailer.createTransport({
+  service: emailService,
+  auth: {
+    user: emailUser,
+    pass: emailPass,
+  },
+});
 
 exports.sendEmail = functions.https.onCall(async ({ data }, context) => {
   const { to, message } = data;
-  console.log(to)
-  console.log(message)
 
   if (!to || !message) {
     return { success: false, error: "Missing 'to' or 'message'" };
   }
 
-  const options = {
+  const mailOptions = {
     to: to,
     from: emailUser,
     subject: "Birthday Reminder",
     text: message,
   };
 
+
   try {
-    // Wtih SendGrid
-    const response = await sendGrid.send(options);
-
-    // With Nodemailer
-    // const transporter = nodemailer.createTransport({
-    //   service: emailService,
-    //   auth: {
-    //     user: emailUser,
-    //     pass: emailPass,
-    //   },
-    // });
-    // await transporter.sendMail(options);
-
-    return { success: true, response };
+    const info = await transporter.sendMail(mailOptions);
+    return { success: true, response: info && info.response ? info.response : info };
   } catch (error) {
     return { success: false, error: error.message };
   }
@@ -79,7 +69,7 @@ const sendBirthdayEmails = async () => {
                 subject: "Happy Birthday!",
                 text,
               };
-              await sendGrid.send(msg);
+              await transporter.sendMail(mailOptions);
             }
           }
         });

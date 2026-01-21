@@ -63,7 +63,7 @@ const sendBirthdayEmails = async () => {
           Don't forget to wish them a happy birthday! 🎈🎁
           Phone: ${userData.phone}
           `;
-              const msg = {
+              const mailOptions = {
                 to: userRecord.email,
                 from: process.env.EMAIL_USER,
                 subject: "Happy Birthday!",
